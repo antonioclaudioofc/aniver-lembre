@@ -31,4 +31,27 @@ export async function authRoutes(app: FastifyInstance) {
 
     return auth;
   });
+
+  app.post("/login", async (request) => {
+    const bodySchema = z.object({
+      username: z.string(),
+      password: z.string(),
+    });
+
+    const { username, password } = bodySchema.parse(request.body);
+
+    const user = await prisma.user.findUnique({ where: { username } });
+
+    if (!user) {
+      return;
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return;
+    }
+
+    return "Deu certo !";
+  });
 }
