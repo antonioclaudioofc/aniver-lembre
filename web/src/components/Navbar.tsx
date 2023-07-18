@@ -1,22 +1,38 @@
-import Image from 'next/image';
-import imgLogo from '../../public/logo.svg';
+import { Logo } from "./Logo";
 
-
-export default function NavBar() {
+export function NavBar() {
     return (
-        <nav className="flex justify-around items-center pt-9">
-            <Image
-                src={imgLogo}
-                alt="Tente"
-            />
-            <ul className="flex gap-12">
-                <li>Início</li>
-                <li>Recursos</li>
-                <li>Como Funciona</li>
-                <li>Depoimentos</li>
-                <li>Contato</li>
+        <div
+            className="mx-32 py-8 flex justify-between items-center"
+        >
+            <Logo />
+            <ul
+                className="text-base flex gap-x-12 text-text"
+            >
+                <li
+                    className="cursor-pointer hover:text-second hover:transition duration-700 ease-linear"
+                >
+                    <a href="">Home</a>
+                </li>
+                <li
+                    className="cursor-pointer hover:text-second hover:transition duration-500 ease-linear"
+                >
+                    <a href="">Serviços</a>
+                </li>
+                <li
+                    className="cursor-pointer hover:text-second hover:transition duration-700 ease-linear"
+                >
+                    <a href="">Sobre</a>
+                </li>
+                <li
+                    className="cursor-pointer hover:text-second hover:transition duration-700 ease-linear"
+                >
+                    <a href="">Contato</a>
+                </li>
             </ul>
-            <button className="py-3 px-11 text-[#dadada] bg-[#1C74BC] rounded-3xl">Login</button>
-        </nav>
+            <a href=""
+                className="text-black bg-second px-5 py-1 rounded-sm hover:bg-primary hover:transition duration-700 ease-linear"
+            >Entrar</a>
+        </div>
     )
 }
