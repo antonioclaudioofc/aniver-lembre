@@ -4,7 +4,7 @@ import { Logo } from "./Logo";
 export function NavBar() {
     return (
         <div
-            className="mx-32 py-8 flex justify-between items-center"
+            className="mx-32 py-9 flex justify-between items-center"
         >
             <Logo />
             <ul
