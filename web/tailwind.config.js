@@ -18,6 +18,9 @@ module.exports = {
         primary_600: "#107cb8",
         second: "#26abe2",
         text: "#f2faff",
+        green_900: "#022B3A",
+        gray_400: "#7C7C7A",
+        black_600: "#202024",
       }
     },
   },
