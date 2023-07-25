@@ -17,7 +17,9 @@ export function About() {
                 <p className="text-base">
                     Nossa aplicação de lembrete de aniversário é a solução definitiva para nunca mais esquecer datas especiais. Diga adeus aos esquecimentos constrangedores e abrace a oportunidade de surpreender seus entes queridos em seu dia especial.
                 </p>
-                <a className="text-primary flex gap-x-10 mt-5 hover:text-black hover:translate-x-20" href="">
+                <a
+                    className="text-primary flex gap-x-10 mt-5 hover:opacity-70"
+                    href="/register">
                     Cadastre-se já
                     <ArrowRight
                         size={24}

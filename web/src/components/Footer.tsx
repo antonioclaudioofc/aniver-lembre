@@ -9,7 +9,7 @@ export function Footer() {
             </div>
             <div className="flex flex-col justify-around">
                 <a
-                    className="flex gap-4"
+                    className="flex gap-4 hover:opacity-70"
                     href="https://www.linkedin.com/in/antonio-claudio-233741231/"
                     target="_blank"
                 >
@@ -17,7 +17,7 @@ export function Footer() {
                     <span className="text-gray-200">antonioclaudio</span>
                 </a>
                 <a
-                    className="flex gap-4"
+                    className="flex gap-4 hover:opacity-70"
                     href="https://github.com/antonioclaudioofc"
                     target="_blank"
                 >
@@ -25,7 +25,7 @@ export function Footer() {
                     <span className="text-gray-200">antonioclaudioofc</span>
                 </a>
                 <a
-                    className="flex gap-4"
+                    className="flex gap-4 hover:opacity-70"
                     href=""
                 >
                     <Mail />
