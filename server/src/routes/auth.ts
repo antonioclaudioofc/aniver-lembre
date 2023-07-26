@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function authRoutes(app: FastifyInstance) {
-  app.post("/register", async (request) => {
+  app.post("/signup", async (request) => {
     const bodySchema = z.object({
       name: z.string(),
       username: z.string(),
@@ -19,7 +19,7 @@ export async function authRoutes(app: FastifyInstance) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const auth = await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name,
         username,
@@ -29,7 +29,19 @@ export async function authRoutes(app: FastifyInstance) {
       },
     });
 
-    return auth;
+    const token = app.jwt.sign(
+      {
+        name: user.name,
+        username: user.username,
+        avatarUser: user.avatarUser,
+      },
+      {
+        sub: user.id,
+        expiresIn: "2 days",
+      }
+    );
+
+    return token;
   });
 
   app.post("/login", async (request) => {

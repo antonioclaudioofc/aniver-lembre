@@ -3,8 +3,15 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 
 export async function birthdayRoutes(app: FastifyInstance) {
-  app.get("/birthdays", async () => {
+  app.addHook("preHandler", async (request) => {
+    await request.jwtVerify();
+  });
+
+  app.get("/birthdays", async (request) => {
     const birthdays = await prisma.birthday.findMany({
+      where: {
+        userId: request.user.sub,
+      },
       orderBy: {
         personName: "asc",
       },
@@ -13,9 +20,7 @@ export async function birthdayRoutes(app: FastifyInstance) {
     return birthdays;
   });
 
-  app.get("/birthdays/:id", async (request) => {
-    // const { id } = request.params;
-
+  app.get("/birthdays/:id", async (request, reply) => {
     const paramsSchema = z.object({
       id: z.string().uuid(),
     });
@@ -27,6 +32,10 @@ export async function birthdayRoutes(app: FastifyInstance) {
         id,
       },
     });
+
+    if (birthday.userId !== request.user.sub) {
+      return reply.status(401).send();
+    }
 
     return birthday;
   });
@@ -47,14 +56,14 @@ export async function birthdayRoutes(app: FastifyInstance) {
         avatarBirthday,
         personName,
         dateOfBirth,
-        userId: "0c0cb3f5-9ce6-45c8-b3ac-3c12e0dfd843",
+        userId: request.user.sub,
       },
     });
 
     return birthday;
   });
 
-  app.put("/birthdays/:id", async (request) => {
+  app.put("/birthdays/:id", async (request, reply) => {
     const paramsSchema = z.object({
       id: z.string().uuid(),
     });
@@ -71,7 +80,17 @@ export async function birthdayRoutes(app: FastifyInstance) {
       request.body
     );
 
-    const birthday = await prisma.birthday.update({
+    let birthday = await prisma.birthday.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    if (birthday.userId !== request.user.sub) {
+      return reply.status(401).send();
+    }
+
+    birthday = await prisma.birthday.update({
       where: {
         id,
       },
@@ -82,17 +101,27 @@ export async function birthdayRoutes(app: FastifyInstance) {
       },
     });
 
-    return birthday
+    return birthday;
   });
 
-  app.delete("/birthdays/:id", async (request) => {
+  app.delete("/birthdays/:id", async (request, reply) => {
     const paramsSchema = z.object({
       id: z.string().uuid(),
     });
 
     const { id } = paramsSchema.parse(request.params);
 
-    const birthday = await prisma.birthday.delete({
+    const birthday = await prisma.birthday.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    if (birthday.userId !== request.user.sub) { 
+      return reply.status(401).send();
+    }
+
+    await prisma.birthday.delete({
       where: {
         id,
       },
