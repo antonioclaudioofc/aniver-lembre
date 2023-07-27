@@ -1,10 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
+import axios from "axios";
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function authRoutes(app: FastifyInstance) {
-  app.post("/signup", async (request) => {
+  app.post("/signup", async (request, reply) => {
     const bodySchema = z.object({
       name: z.string(),
       username: z.string(),
@@ -41,10 +42,12 @@ export async function authRoutes(app: FastifyInstance) {
       }
     );
 
+    reply.header("Authorization", `Bearer ${token}`);
+
     return token;
   });
 
-  app.post("/login", async (request) => {
+  app.post("/login", async (request, reply) => {
     const bodySchema = z.object({
       username: z.string(),
       password: z.string(),
@@ -55,15 +58,29 @@ export async function authRoutes(app: FastifyInstance) {
     const user = await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
-      return;
+      return reply.status(400).send();
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return;
+      return reply.status(400).send();
     }
 
-    return "Deu certo !";
+    const token = app.jwt.sign(
+      {
+        name: user.name,
+        username: user.username,
+        avatarUser: user.avatarUser,
+      },
+      {
+        sub: user.id,
+        expiresIn: "2 days",
+      }
+    );
+
+    reply.header("Authorization", `Bearer ${token}`);
+
+    return token;
   });
 }

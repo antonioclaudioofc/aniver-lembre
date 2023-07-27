@@ -5,8 +5,7 @@ import { createWriteStream } from "node:fs";
 import { extname, resolve } from "node:path";
 import { promisify } from "node:util";
 import { pipeline } from "node:stream";
-import { url } from "node:inspector";
-
+  
 const pump = promisify(pipeline)
 
 export async function uploadRoutes(app: FastifyInstance) {
@@ -42,8 +41,6 @@ export async function uploadRoutes(app: FastifyInstance) {
     const fullUrl = request.protocol.concat('://').concat(request.hostname)
     const fileUrl = new URL(`/uploads/${fileName}`, fullUrl).toString()
 
-    return {
-        fileUrl
-    }
+    return { fileUrl }
   });
 }
