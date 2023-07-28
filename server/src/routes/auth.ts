@@ -42,9 +42,22 @@ export async function authRoutes(app: FastifyInstance) {
       }
     );
 
-    reply.header("Authorization", `Bearer ${token}`);
+    const cookieExpiresInSeconds = 60 * 60 * 24 * 24;
 
-    return token;
+    // csrftoken:"NyI0uGM2tjZE4IVqDQa5jbagG5pLPO1z"
+
+    reply.setCookie("token", token, {
+      domain: "localhost",
+      path: "/",
+      httpOnly: false,
+      secure: false,
+      sameSite: "none",
+      expires: new Date(Date.now() + cookieExpiresInSeconds),
+    });
+
+    console.log("Cookies na resposta:", reply.getHeader("Set-Cookie"));
+
+    return { token };
   });
 
   app.post("/login", async (request, reply) => {
@@ -81,6 +94,6 @@ export async function authRoutes(app: FastifyInstance) {
 
     reply.header("Authorization", `Bearer ${token}`);
 
-    return token;
+    return { token };
   });
 }

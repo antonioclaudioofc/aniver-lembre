@@ -5,14 +5,19 @@ import { Input } from "./Input";
 import { FormEvent } from "react";
 import { MediaPicker } from "./MediaPicker";
 import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export function FormRegister() {
+    const router = useRouter()
+
     async function handleCreateUser(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
 
         const formData = new FormData(event.currentTarget)
 
         const fileToUpload = formData.get("avatarUser")
+
+        let avatarUser = ""
 
         if (fileToUpload) {
             const uploadFormData = new FormData()
@@ -21,9 +26,22 @@ export function FormRegister() {
 
             const uploadResponse = await api.post('/upload', uploadFormData)
 
-
-            console.log(uploadResponse.data)
+            avatarUser = uploadResponse.data.fileUrl
         }
+
+        const reponse = await api.post(
+            '/signup',
+            {
+                avatarUser,
+                name: formData.get("name"),
+                username: formData.get("username"),
+                email: formData.get("email"),
+                password: formData.get("password")
+            }
+        )
+
+        console.log(reponse.data.token)
+        // router.push('/')
     }
 
     return (
