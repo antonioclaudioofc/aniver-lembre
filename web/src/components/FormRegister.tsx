@@ -6,11 +6,13 @@ import { FormEvent } from "react";
 import { MediaPicker } from "./MediaPicker";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { setCookie } from "@/utils/cookie";
 
 export function FormRegister() {
     const router = useRouter()
 
     async function handleCreateUser(event: FormEvent<HTMLFormElement>) {
+        
         event.preventDefault()
 
         const formData = new FormData(event.currentTarget)
@@ -29,7 +31,7 @@ export function FormRegister() {
             avatarUser = uploadResponse.data.fileUrl
         }
 
-        const reponse = await api.post(
+        const registerResponse = await api.post(
             '/signup',
             {
                 avatarUser,
@@ -40,8 +42,11 @@ export function FormRegister() {
             }
         )
 
-        console.log(reponse.data.token)
-        // router.push('/')
+        const { token } = registerResponse.data
+
+        setCookie('token', token, { expires: 7, path: '/' });
+
+        router.push('/')
     }
 
     return (

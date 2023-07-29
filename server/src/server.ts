@@ -3,7 +3,6 @@ import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import multipart from "@fastify/multipart";
 import statics from "@fastify/static";
-import cookie from "@fastify/cookie";
 
 import { birthdayRoutes } from "./routes/birthday";
 import { authRoutes } from "./routes/auth";
@@ -17,10 +16,6 @@ app.register(statics, {
   prefix: "/uploads",
 });
 
-app.register(cookie, {
-  secret: "hsdjshdjsh",
-  hook: "onRequest",
-});
 
 app.register(multipart);
 

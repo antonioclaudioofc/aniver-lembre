@@ -42,21 +42,6 @@ export async function authRoutes(app: FastifyInstance) {
       }
     );
 
-    const cookieExpiresInSeconds = 60 * 60 * 24 * 24;
-
-    // csrftoken:"NyI0uGM2tjZE4IVqDQa5jbagG5pLPO1z"
-
-    reply.setCookie("token", token, {
-      domain: "localhost",
-      path: "/",
-      httpOnly: false,
-      secure: false,
-      sameSite: "none",
-      expires: new Date(Date.now() + cookieExpiresInSeconds),
-    });
-
-    console.log("Cookies na resposta:", reply.getHeader("Set-Cookie"));
-
     return { token };
   });
 
