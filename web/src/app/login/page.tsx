@@ -1,7 +1,18 @@
+'use client'
+
 import { FormLogin } from "@/components/FormLogin";
 import { ChevronLeft } from "lucide-react";
+import Cookie from 'js-cookie';
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+    const isAuthenticated = Cookie.get('token')
+    const router = useRouter()
+
+    if (isAuthenticated) {
+        router.push('/dashboard');
+    }
+    
     return (
         <section className="relative h-screen bg-green_900 flex justify-center">
             <a

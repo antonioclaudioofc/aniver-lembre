@@ -6,7 +6,8 @@ import { FormEvent } from "react";
 import { MediaPicker } from "./MediaPicker";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/utils/cookie";
+import Cookie from 'js-cookie';
+
 
 export function FormRegister() {
     const router = useRouter()
@@ -44,9 +45,9 @@ export function FormRegister() {
 
         const { token } = registerResponse.data
 
-        setCookie('token', token, { expires: 7, path: '/' });
+        Cookie.set('token', token, { expires: 7, path: '/' });
 
-        router.push('/')
+        router.push('/dashboard')
     }
 
     return (
