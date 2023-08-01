@@ -1,5 +1,12 @@
 {
-  "functions": {
-    "server/src/server.ts"
-  }
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/src/$1"
+    },
+    {
+      "src": ".*",
+      "dest": "/web/$1"
+    }
+  ]
 }
