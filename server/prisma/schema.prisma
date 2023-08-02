@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id         String @id @default(uuid())
+  id         String @id @default(cuid())
   name       String
   username   String @unique
   email      String
@@ -22,7 +22,7 @@ model User {
 }
 
 model Birthday {
-  id     String @id @default(uuid())
+  id     String @id @default(cuid())
   userId String
 
   personName     String
