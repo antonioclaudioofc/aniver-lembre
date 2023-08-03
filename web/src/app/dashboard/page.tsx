@@ -17,7 +17,7 @@ export default function Dashboard() {
                 </div>
             </section>
             <hr className="mx-32 mt-4 " />
-            <div className="mx-32 mt-4">
+            <div className="mx-32 mt-4 flex flex-wrap gap-6 items-center justify-center">
                 <Card />
             </div>
         </div>
