@@ -1,11 +1,9 @@
 import { CalendarDays, Home, Settings } from "lucide-react";
 import { Link } from "./Link";
 import { Logo } from "./Logo";
-import Image from "next/image";
 
 interface Auth {
     name: string,
-    img: string
 }
 
 export function NavbarDashboard(props: Auth) {
@@ -33,13 +31,7 @@ export function NavbarDashboard(props: Auth) {
             </ul>
             <div className="flex items-center justify-center gap-x-3 text-white">
                 <div className="w-12 h-12">
-                    <Image
-                        className="w-full h-full object-cover rounded-full"
-                        src={props.img}
-                        width={128}
-                        height={128}
-                        alt="foto de perfil"
-                    />
+                  user
                 </div>
                 <h4>{props.name}</h4>
             </div>

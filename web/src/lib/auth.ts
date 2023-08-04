@@ -5,7 +5,6 @@ interface User {
   sub: string;
   name: string;
   username: string;
-  avatarUser: string;
 }
 
 export function getUser(): User {

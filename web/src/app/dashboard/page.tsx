@@ -4,10 +4,10 @@ import { getUser } from "@/lib/auth"
 import { Plus } from "lucide-react"
 
 export default function Dashboard() {
-    const { sub, name, avatarUser } = getUser()
+    const { sub, name } = getUser()
     return (
         <div>
-            <NavbarDashboard name={name} img={avatarUser} />
+            <NavbarDashboard name={name} />
             <section className="mx-32 mt-6 flex items-center justify-between">
                 <h2 className="text-4xl">Meus Eventos</h2>
 

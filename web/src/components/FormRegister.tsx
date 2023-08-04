@@ -18,24 +18,23 @@ export function FormRegister() {
 
         const formData = new FormData(event.currentTarget)
 
-        const fileToUpload = formData.get("avatarUser")
+        // const fileToUpload = formData.get("avatarUser")
 
-        let avatarUser = ""
+        // let avatarUser = ""
 
-        if (fileToUpload) {
-            const uploadFormData = new FormData()
+        // if (fileToUpload) {
+        //     const uploadFormData = new FormData()
 
-            uploadFormData.set('file', fileToUpload)
+        //     uploadFormData.set('file', fileToUpload)
 
-            const uploadResponse = await api.post('/upload', uploadFormData)
+        //     const uploadResponse = await api.post('/upload', uploadFormData)
 
-            avatarUser = uploadResponse.data.fileUrl
-        }
+        //     avatarUser = uploadResponse.data.fileUrl
+        // }
 
         const registerResponse = await api.post(
             '/signup',
             {
-                avatarUser,
                 name: formData.get("name"),
                 username: formData.get("username"),
                 email: formData.get("email"),

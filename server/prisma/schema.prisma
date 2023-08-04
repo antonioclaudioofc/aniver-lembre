@@ -15,7 +15,6 @@ model User {
   name       String
   username   String @unique
   email      String
-  avatarUser String
   password   String
 
   birthdays Birthday[]
@@ -27,7 +26,6 @@ model Birthday {
 
   personName     String
   dateOfBirth    DateTime
-  avatarBirthday String
 
   user User @relation(fields: [userId], references: [id])
 }
