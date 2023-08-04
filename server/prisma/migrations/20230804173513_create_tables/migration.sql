@@ -4,7 +4,6 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "avatarUser" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -16,7 +15,6 @@ CREATE TABLE "Birthday" (
     "userId" TEXT NOT NULL,
     "personName" TEXT NOT NULL,
     "dateOfBirth" TIMESTAMP(3) NOT NULL,
-    "avatarBirthday" TEXT NOT NULL,
 
     CONSTRAINT "Birthday_pkey" PRIMARY KEY ("id")
 );
