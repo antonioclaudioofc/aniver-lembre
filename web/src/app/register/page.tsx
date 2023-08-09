@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react";
 
 export default function Register() {
     return (
-        <section className="relative bg-green_900 flex justify-center">
+        <section className="relative min-h-screen bg-green_900 flex justify-center">
              <a
                 href="/login"
                 className="absolute top-6 left-20 flex items-center gap-x-5 text-xl text-text hover:opacity-70"

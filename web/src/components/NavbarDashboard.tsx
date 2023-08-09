@@ -1,4 +1,4 @@
-import { CalendarDays, Home, Settings } from "lucide-react";
+import { CalendarDays, Home, Settings, UserCircle2 } from "lucide-react";
 import { Link } from "./Link";
 import { Logo } from "./Logo";
 
@@ -30,9 +30,7 @@ export function NavbarDashboard(props: Auth) {
 
             </ul>
             <div className="flex items-center justify-center gap-x-3 text-white">
-                <div className="w-12 h-12">
-                  user
-                </div>
+                <UserCircle2 size={36} />
                 <h4>{props.name}</h4>
             </div>
         </div>

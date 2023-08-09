@@ -29,9 +29,11 @@ export function Services() {
                     </div>
                 </div>
                 <Image
-                    className="w-96 h-96 object-cover"
-                    src={"https://images.unsplash.com/photo-1665686308707-419a10042d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80"}
+                    className="object-cover"
+                    src={imgContent}
                     alt={""}
+                    width={320}
+                    height={320}
                 />
                 <ChevronRight
                     size={40}
