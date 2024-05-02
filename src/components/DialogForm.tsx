@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,14 +10,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { CalendarPlus } from "lucide-react";
-import { AddForm } from "./AddForm";
+import { EventForm } from "./EventForm";
+import { useState } from "react";
 
 export function DialogForm() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const openDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger className="absolute bottom-6 right-6" asChild>
         <Button className="bg-violet-500 text-white" variant="ghost">
           <CalendarPlus size={32} />
@@ -27,9 +37,8 @@ export function DialogForm() {
           <DialogDescription>Preencha as informações abaixo</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <AddForm />
+          <EventForm closeDialog={closeDialog} />
         </div>
-       
       </DialogContent>
     </Dialog>
   );

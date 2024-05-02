@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import { ArrowLeft, ArrowRight, CalendarIcon } from "lucide-react";
-import { z } from "zod";
+import { string, z } from "zod";
 
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -34,34 +34,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { storage } from "../config/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Label } from "./ui/label";
+import { uploadEvent } from "@/utils/uploadEvent";
+import { EventModel } from "@/model/EventModel";
+import { storage } from "@/config/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import NextNProgress from "nextjs-progressbar";
 
-const formSchema = z.object({
-  eventName: z.string({
-    required_error: "Digite o nome do evento",
-  }),
-  eventDate: z.date({
-    required_error: "Selecione a data em que o evento ocorrerá",
-  }),
-  category: z.string({
-    required_error:
-      "Escolha uma categoria que melhor descreva o tipo de evento",
-  }),
-  location: z.string(),
-  description: z.string(),
-  frequency: z.string({
-    required_error: "Defina se o evento se repete e com que frequência",
-  }),
-  fileImage: z.union([z.string().nullable(), z.instanceof(File)]),
-});
-
-export function AddForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export function EventForm({ closeDialog }: { closeDialog: () => void }) {
+  const form = useForm<z.infer<typeof EventModel>>({
+    resolver: zodResolver(EventModel),
+    defaultValues: {
+      eventName: "",
+      eventDate: new Date(),
+      category: "",
+      location: "",
+      description: "",
+      frequency: "",
+      urlImage: "",
+    },
   });
+
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNextStep = () => setStep(step + 1);
   const handlePreviousStep = () => setStep(step - 1);
@@ -69,36 +64,47 @@ export function AddForm() {
   const [fileImage, setFileImage] = useState<File | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setFileImage(e.target.files[0]);
-      console.log(e.target.files[0]);
+      setFileImage(file);
       field.onChange(file);
-      console.log(field.onChange(file));
     }
   };
 
-  const handleUpload = async () => {
+  const handleSubmit = async (values: z.infer<typeof EventModel>) => {
     try {
+      setIsLoading(true);
       if (fileImage) {
-        const storageRef = ref(storage, `images/${fileImage.name}`);
+        const now = new Date();
+        const formattedDateTime = now.toISOString().replace(/:/g, "-");
+        const fileNameWithDateTime = `${formattedDateTime}_${fileImage.name}`;
+        const storageRef = ref(storage, `images/${fileNameWithDateTime}`);
 
-        const uploadResult = await uploadBytes(storageRef, fileImage);
+        await uploadBytes(storageRef, fileImage);
 
         const downloadUrl = await getDownloadURL(storageRef);
+        values.urlImage = downloadUrl;
 
-        console.log("Formulário atualizado com o URL da imagem");
+        await uploadEvent(values);
+
+        toast({
+          title: "Evento adicionado com sucesso!",
+        });
+
+        closeDialog();
       } else {
         console.log("Nenhuma imagem selecionada para upload");
       }
     } catch (error) {
-      console.error("Erro durante o upload ou obtenção do URL:", error);
+      console.error("Erro ao lidar com o formulário:", error);
+    } finally {
+      setIsLoading(true);
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleUpload)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         {step === 1 && (
           <>
             <FormField
@@ -264,6 +270,7 @@ export function AddForm() {
                       id="fileImage"
                       type="file"
                       onChange={(e) => handleChange(e, field)}
+                      accept="image/*"
                     />
                   </FormControl>
                   <FormMessage />
@@ -280,7 +287,17 @@ export function AddForm() {
                 Anterior
               </Button>
               <Button className="w-full" type="submit" variant={"default"}>
-                Adicionar
+                {isLoading ? (
+                  <NextNProgress
+                    color="#fff"
+                    startPosition={0.3}
+                    stopDelayMs={200}
+                    height={3}
+                    showOnShallow={true}
+                  />
+                ) : (
+                  "Adicionar"
+                )}
               </Button>
             </div>
           </>
