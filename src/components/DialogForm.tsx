@@ -26,9 +26,9 @@ export function DialogForm() {
   };
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger className="absolute bottom-6 right-6" asChild>
-        <Button className="bg-violet-500 text-white" variant="ghost">
-          <CalendarPlus size={32} />
+      <DialogTrigger className="fixed bottom-6 right-6 py-7 shadow-2xl" asChild>
+        <Button className="bg-violet-500 text-white rounded-full" variant="ghost">
+          <CalendarPlus className="h-6 w-6" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

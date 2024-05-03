@@ -4,7 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import { ArrowLeft, ArrowRight, CalendarIcon } from "lucide-react";
-import { string, z } from "zod";
+import { z } from "zod";
+import Image from "next/image";
 
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -39,18 +39,16 @@ import { uploadEvent } from "@/utils/uploadEvent";
 import { EventModel } from "@/model/EventModel";
 import { storage } from "@/config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import NextNProgress from "nextjs-progressbar";
+import LoaderIndicator from "./LoaderIndicator";
+import { toast } from "@/components/ui/use-toast";
 
 export function EventForm({ closeDialog }: { closeDialog: () => void }) {
   const form = useForm<z.infer<typeof EventModel>>({
     resolver: zodResolver(EventModel),
     defaultValues: {
-      eventName: "",
       eventDate: new Date(),
-      category: "",
       location: "",
       description: "",
-      frequency: "",
       urlImage: "",
     },
   });
@@ -58,22 +56,21 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleNextStep = () => setStep(step + 1);
-  const handlePreviousStep = () => setStep(step - 1);
-
   const [fileImage, setFileImage] = useState<File | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFileImage(file);
-      field.onChange(file);
+      setFileImage(e.target.files[0]);
     }
   };
+
+  const handleNextStep = () => setStep(step + 1);
+  const handlePreviousStep = () => setStep(step - 1);
 
   const handleSubmit = async (values: z.infer<typeof EventModel>) => {
     try {
       setIsLoading(true);
+
       if (fileImage) {
         const now = new Date();
         const formattedDateTime = now.toISOString().replace(/:/g, "-");
@@ -83,22 +80,28 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
         await uploadBytes(storageRef, fileImage);
 
         const downloadUrl = await getDownloadURL(storageRef);
+
         values.urlImage = downloadUrl;
-
-        await uploadEvent(values);
-
-        toast({
-          title: "Evento adicionado com sucesso!",
-        });
-
-        closeDialog();
       } else {
-        console.log("Nenhuma imagem selecionada para upload");
+        values.urlImage = "";
       }
+
+      await uploadEvent(values);
+
+      closeDialog();
+
+      toast({
+        title: "Evento criado com sucesso!",
+        description: "O evento foi adicionado com sucesso.",
+      });
     } catch (error) {
       console.error("Erro ao lidar com o formulário:", error);
+      toast({
+        title: "Erro ao criar o evento",
+        description: "Ocorreu um erro ao criar o evento. Tente novamente.",
+      });
     } finally {
-      setIsLoading(true);
+      setIsLoading(false);
     }
   };
 
@@ -137,7 +140,7 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, "dd/MM/yyyy")
                           ) : (
                             <span>Selecione a data</span>
                           )}
@@ -150,9 +153,12 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => {
+                          const today = new Date();
+                          const maxDate = new Date();
+                          maxDate.setFullYear(today.getFullYear() + 10);
+                          return date < today || date > maxDate;
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -174,7 +180,6 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
                       {...field}
                     />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -261,7 +266,7 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
             />
             <FormField
               control={form.control}
-              name="fileImage"
+              name="urlImage"
               render={({ field }) => (
                 <FormItem className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="fileImage">Imagem</Label>
@@ -269,7 +274,7 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
                     <Input
                       id="fileImage"
                       type="file"
-                      onChange={(e) => handleChange(e, field)}
+                      onChange={(e) => handleImageChange(e)}
                       accept="image/*"
                     />
                   </FormControl>
@@ -288,13 +293,9 @@ export function EventForm({ closeDialog }: { closeDialog: () => void }) {
               </Button>
               <Button className="w-full" type="submit" variant={"default"}>
                 {isLoading ? (
-                  <NextNProgress
-                    color="#fff"
-                    startPosition={0.3}
-                    stopDelayMs={200}
-                    height={3}
-                    showOnShallow={true}
-                  />
+                  <div className="cursor-not-allowed">
+                    <LoaderIndicator />
+                  </div>
                 ) : (
                   "Adicionar"
                 )}
