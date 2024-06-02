@@ -1,0 +1,1 @@
+export const ISO8601DateRegex = /^\d{4}-\d{2}-\d{2}$/;
