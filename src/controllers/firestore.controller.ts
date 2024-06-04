@@ -1,10 +1,8 @@
 import { SubscribeParams } from "@/models/subscribe_params.model";
-import { firestore } from "@/services/firestore.service";
 import { addDoc, collection } from "firebase/firestore";
+import { firestore } from "@/services/firestore.service";
 
 export class FirestoreController {
-  private constructor() {}
-
   static instance: FirestoreController | null = null;
 
   static async getInstance() {
@@ -19,23 +17,22 @@ export class FirestoreController {
   }
 
   async register(params: SubscribeParams) {
+    const { type, ...data } = params;
     try {
-      switch (params.type) {
+      switch (type) {
         case "event":
+          const collectionName = "events";
+          const docRef = await addDoc(
+            collection(firestore, collectionName),
+            data
+          );
           break;
         default:
           throw new Error("Tipo de entidade desconhecido");
       }
-
-      const collectionRef = await addDoc(
-        collection(firestore, "event"),
-        params
-      );
-      console.log("Document written with ID: ", collectionRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
-
-      throw new Error(error.response?.data?.message);
+      throw new Error("Erro ao adicionar documento: ");
     }
   }
 }
