@@ -27,6 +27,8 @@ import {
 } from "../components/Form";
 import { Input } from "../components/Input";
 import React from "react";
+import { Switch } from "../components/Switch";
+import { Clock3 } from "lucide-react";
 
 export default function FormEvent() {
   const router = useRouter();
@@ -36,6 +38,14 @@ export default function FormEvent() {
     resolver: zodResolver(eventSchema),
     defaultValues: {
       nomeEvento: "",
+      notificacaoDiaria: false,
+      localizacao: "",
+      email: "",
+      notas: "",
+      imagemLinkURL: "",
+      intervaloNotificacao: 0,
+      frequencia: 0,
+      dataLimite: "",
     },
   });
 
@@ -91,6 +101,58 @@ export default function FormEvent() {
                     <Input
                       placeholder="
                           Insira o nome do evento"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={formEvent.control}
+              name="notificacaoDiaria"
+              render={({ field }) => (
+                <FormItem className="flex flex-row cursor-pointer items-center justify-between rounded-lg p-2">
+                  <div className="flex items-center gap-x-3 space-y-0.5">
+                    <Clock3 className="w-6 h-6" />
+                    <FormLabel className="text-sm text">Todo o dia</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={formEvent.control}
+              name="localizacao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Local</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="
+                      Local "
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={formEvent.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email *</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="
+                          Insira o email"
                       {...field}
                     />
                   </FormControl>
