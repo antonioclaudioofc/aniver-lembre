@@ -11,9 +11,9 @@ export default function Navbar() {
   return (
     <nav
       className={clsx(
-        "flex justify-between items-center sticky top-0 h-20 max-xl:h-20 bg-fuchsia-600 transition-all duration-300 z-10 px-24",
+        "flex justify-between items-center sticky top-0 h-20 max-xl:h-20 bg-violet-300 transition-all duration-300 z-10 px-24",
         scrollPosition > 0
-          ? "backdrop-filter backdrop-blur-lg bg-opacity-90 bg-zinc-900 "
+          ? "backdrop-filter backdrop-blur-lg bg-opacity-90 bg-gray-600 "
           : ""
       )}
     >

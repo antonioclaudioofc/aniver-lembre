@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { eventSchema } from "./event.model";
+import { birthdaySchema } from "./birthday.model";
 
 export const subscribeParamsSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal("event"),
-    ...eventSchema.shape,
+    type: z.literal("birth"),
+    ...birthdaySchema.shape,
   }),
 ]);
 

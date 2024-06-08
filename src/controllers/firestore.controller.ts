@@ -20,8 +20,8 @@ export class FirestoreController {
     const { type, ...data } = params;
     try {
       switch (type) {
-        case "event":
-          const collectionName = "events";
+        case "birth":
+          const collectionName = "births";
           const docRef = await addDoc(
             collection(firestore, collectionName),
             data

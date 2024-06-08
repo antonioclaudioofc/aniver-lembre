@@ -5,7 +5,7 @@ import { CalendarPlus } from "lucide-react";
 export default function Home() {
   return (
     <div>
-      <Link href="/event">
+      <Link href="/add-birth">
         <CustomButton className="fixed right-16 bottom-16 w-14 h-14 rounded-full">
           <CalendarPlus />
         </CustomButton>
