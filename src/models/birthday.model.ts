@@ -1,5 +1,5 @@
 import { ISO8601DateRegex, timeRegex } from "@/utils/regex";
-import { isValidData } from "@/utils/validation";
+import { isValidBirthData, isValidData } from "@/utils/validation";
 import { z } from "zod";
 
 export const birthdaySchema = z.object({
@@ -8,7 +8,7 @@ export const birthdaySchema = z.object({
     .string()
     .min(1, { message: "Campo obrigatótio" })
     .regex(ISO8601DateRegex, { message: "Data inválida" })
-    .refine((date: string) => isValidData(date), {
+    .refine((date: string) => isValidBirthData(date), {
       message: "Data inválida",
     }),
   notificationDate: z

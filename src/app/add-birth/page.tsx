@@ -134,7 +134,10 @@ export default function FormBirth() {
                       className="hidden"
                       placeholder="
                           Insira o nome do aniversariante"
-                      onChange={handleFileChange}
+                      onChange={(event) => {
+                        field.onChange(event);
+                        handleFileChange(event);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
