@@ -249,11 +249,11 @@ export default function FormBirth() {
               />
             </div>
             <DialogFooter>
-              <Button form="form" type="submit" disabled={isLoading}>
+              <Button className="bg-green-600 hover:bg-green-700" form="form" type="submit" disabled={isLoading}>
                 Salvar
               </Button>
               <DialogClose onClick={closeDialog} asChild>
-                <Button className="bg-orange-300 hover:bg-orange-400 ">
+                <Button className="bg-yellow-600 hover:bg-yellow-700 ">
                   Cancelar
                 </Button>
               </DialogClose>

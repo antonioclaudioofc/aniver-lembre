@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body
-        className={cn("min-h-screen font-sans antialiased", fontSans.variable)}
+        className={cn("min-h-screen font-sans antialiased bg-gray-50", fontSans.variable)}
       >
         <Navbar />
         <Toaster richColors position="bottom-center" duration={4000} />
