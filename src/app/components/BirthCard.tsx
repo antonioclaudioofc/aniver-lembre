@@ -1,25 +1,50 @@
-"use server";
+"use client";
 
+import React from "react";
 import Button from "./Button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./Card";
 import Image from "next/image";
 import clsx from "clsx";
-import { DocumentData, collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, DocumentData } from "firebase/firestore";
 import { firestore } from "@/services/firestore.service";
 
-export default async function EventCard() {
-  const { data } = await getData();
+interface PropsBirth {
+  initialData: { id: string; data: DocumentData }[];
+}
+export default function BirthCard(props: PropsBirth) {
+  const [data, setData] = React.useState<{ id: string; data: DocumentData }[]>(
+    props.initialData
+  );
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    setLoading(true);
+    const unsub = onSnapshot(collection(firestore, "births"), (snapshot) => {
+      const newData: { id: string; data: DocumentData }[] = [];
+      snapshot.forEach((doc) => {
+        newData.push({ id: doc.id, data: doc.data() });
+      });
+      setData(newData);
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="px-24 w-full max-w-7xl mx-auto">
       <div
         className={clsx(
           "flex items-center gap-4 flex-wrap",
-          "max-xl:px-5 max-xl:w-full"
+          "max-xl:px-5 max-xl:w-full max-lg:justify-center"
         )}
       >
         {data.map((birth: any) => (
-          <Card key={birth.id} className="w-[350px] h-[524px] bg-violet-200">
+          <Card key={birth.id} className="w-[350px] h-[600px] bg-violet-200 relative -z-10">
             <Image
               src={birth.data.imageLinkURL}
               width={80}
@@ -41,8 +66,8 @@ export default async function EventCard() {
                 </h4>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button className="bg-red-700">Excluir</Button>
+            <CardFooter className="absolute bottom-4 right-4">
+              <Button className="bg-red-700 mr-32">Excluir</Button>
               <Button className="bg-yellow-600">Editar</Button>
             </CardFooter>
           </Card>
@@ -50,13 +75,4 @@ export default async function EventCard() {
       </div>
     </div>
   );
-}
-
-async function getData() {
-  const querySnapshot = await getDocs(collection(firestore, "births"));
-  const data: { id: string; data: DocumentData }[] = [];
-  querySnapshot.forEach((doc) => {
-    data.push({ id: doc.id, data: doc.data() });
-  });
-  return { data };
 }

@@ -16,7 +16,7 @@ export default function Home() {
         </header>
       </section>
       <main>
-        <BirthCard />
+        <BirthCard initialData={[]} />
       </main>
       <div>
         <Link href="/add-birth">
