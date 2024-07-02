@@ -44,7 +44,10 @@ export default function BirthCard(props: PropsBirth) {
         )}
       >
         {data.map((birth: any) => (
-          <Card key={birth.id} className="w-[350px] h-[600px] bg-violet-200 relative -z-10">
+          <Card
+            key={birth.id}
+            className="w-[350px] h-[600px] bg-violet-200 relative -z-10"
+          >
             <Image
               src={birth.data.imageLinkURL}
               width={80}

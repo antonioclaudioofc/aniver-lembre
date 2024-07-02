@@ -1,9 +1,24 @@
-import Link from "next/link";
+"use client";
+
 import CustomButton from "./components/Button";
 import { CalendarPlus } from "lucide-react";
 import BirthCard from "./components/BirthCard";
+import FormEvent from "./components/FormEvent";
+import {
+  DialogHeader,
+  DialogFooter,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "./components/Dialog";
+import Button from "./components/Button";
+import React from "react";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = React.useState(false);
   return (
     <>
       <section className="mx-auto px-24 max-w-7xl">
@@ -19,11 +34,32 @@ export default function Home() {
         <BirthCard initialData={[]} />
       </main>
       <div>
-        <Link href="/add-birth">
-          <CustomButton className="fixed right-16 bottom-16 w-14 h-14 rounded-full">
-            <CalendarPlus />
-          </CustomButton>
-        </Link>
+        <Dialog>
+          <DialogTrigger asChild>
+            <CustomButton className="fixed right-16 bottom-16 w-14 h-14 rounded-full">
+              <CalendarPlus />
+            </CustomButton>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md max-h-[90%] overflow-y-auto overflow-x-hidden text-black">
+            <DialogHeader>
+              <DialogTitle>Adicionar Aniversário</DialogTitle>
+              <DialogDescription>
+                Preencha as informações abaixo
+              </DialogDescription>
+            </DialogHeader>
+            <FormEvent isLoading={isLoading} setIsLoading={setIsLoading} />
+            <DialogFooter>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                form="form"
+                type="submit"
+                disabled={isLoading}
+              >
+                Salvar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );
