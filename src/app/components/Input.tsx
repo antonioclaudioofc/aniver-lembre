@@ -10,13 +10,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, icon, type, ...props }, ref) => {
     return (
       <div className="relative flex items-center">
-        {icon && (
-          <span className="absolute right-3 top-[10px]">{icon}</span>
-        )}
+        {icon && <span className="absolute right-3 top-[10px]">{icon}</span>}
         <input
           type={type}
           className={cn(
-            "flex text-gray-400 bg-white-50 text-sm h-10 w-full outline-none rounded-md border border-gray-50 p-4 placeholder:text-gray-200  disabled:cursor-not-allowed disabled:opacity-50",
+            "flex text-gray-400 bg-white-50 text-sm h-10 w-full outline-none rounded-md border border-gray-50 p-4 placeholder:text-gray-200 focus:bg-pink-50 focus:border-pink-100 focus:text-black disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
           ref={ref}

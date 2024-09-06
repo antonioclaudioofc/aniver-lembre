@@ -15,7 +15,7 @@ export default function Button({
       <button
         {...props}
         className={twMerge(
-          "whitespace-nowrap px-4 py-2 rounded-md mt-6 font-semibold w-full duration-300 text-sm",
+          "whitespace-nowrap px-4 py-2 rounded-md font-semibold w-full duration-300 text-sm",
           typeStyle === "primary" && "bg-pink-300 text-white-50 hover:bg-pink-500",
           typeStyle === "secondary" &&
             "bg-green-500 border text-white hover:bg-green-700",

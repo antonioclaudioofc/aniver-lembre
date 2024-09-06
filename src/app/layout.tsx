@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
+import moments from "./assets/moments.svg";
 
 const nunito_sans = Nunito_Sans({
   subsets: ["latin"],
@@ -19,7 +21,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={`${nunito_sans.variable} font-sans`}>{children}</body>
+      <body className={`${nunito_sans.variable} font-sans`}>
+        <main className="grid min-h-screen grid-cols-2">
+          {children}
+          <div className="bg-pink-100 flex justify-center">
+            <Image
+              className="max-w-xl w-full"
+              src={moments}
+              alt="Moments"
+              width={500}
+              height={500}
+            />
+          </div>
+        </main>
+      </body>
     </html>
   );
 }
