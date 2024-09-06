@@ -1,6 +1,6 @@
-import Button from "../components/Button";
-import { Header } from "../components/Header";
-import { Icon } from "../components/Icon";
+import Button from "@/components/Button";
+import { Header } from "@/components/Header";
+import { Icon } from "@/components/Icon";
 
 export default function SucessPassword() {
   return (

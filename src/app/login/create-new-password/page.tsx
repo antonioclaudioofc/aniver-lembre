@@ -1,7 +1,7 @@
-import Button from "../components/Button";
-import { Header } from "../components/Header";
-import { Icon } from "../components/Icon";
-import { Input } from "../components/Input";
+import Button from "@/components/Button";
+import { Header } from "@/components/Header";
+import { Icon } from "@/components/Icon";
+import { Input } from "@/components/Input";
 
 export default function CreateNewPassword() {
   return (
