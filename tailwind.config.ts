@@ -1,96 +1,59 @@
 import type { Config } from "tailwindcss";
-const colors = require("tailwindcss/colors");
 
-const config = {
-  darkMode: ["class"],
+const config: Config = {
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  prefix: "",
   theme: {
-    colors: {
-      black: colors.black,
-      white: colors.white,
-      red: colors.red,
-      transparent: colors.transparent,
-      green: colors.green,
-      gray: {
-        50: "#F9FAFB",
-        100: "#F3F4F6",
-        200: "#E5E7EB",
-        300: "#D1D5DB",
-        400: "#9CA3AF",
-        500: "#6B7280",
-        600: "#4B5563",
-        700: "#374151",
-        800: "#1F2937",
-        900: "#111827",
-      },
-      violet: {
-        50: "#ededf3",
-        100: "#e5e3ed",
-        200: "#c8c6da",
-        300: "#4f4789",
-        400: "#47407b",
-        500: "#3f396e",
-        600: "#3b3567",
-        700: "#2f2b52",
-        800: "#24203e",
-        900: "#1c1930",
-      },
-      yellow: {
-        50: "#fffdef",
-        100: "#fffbe7",
-        200: "#fef8ce",
-        300: "#fce762",
-        400: "#e3d058",
-        500: "#cab94e",
-        600: "#bdad4a",
-        700: "#978b3b",
-        800: "#71682c",
-        900: "#585122",
-      },
-      orange: {
-        50: "#fff7f2",
-        100: "#fff3eb",
-        200: "#ffe7d6",
-        300: "#ffb17a",
-        400: "#e69f6e",
-        500: "#cc8e62",
-        600: "#bf855c",
-        700: "#996a49",
-        800: "#735037",
-        900: "#593e2b",
-      },
-    },
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
+      fontFamily: {
+        sans: ["var(--font-nunito-sans)"],
       },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+      colors: {
+        white: {
+          50: "#FDFDFD",
+        },
+        gray: {
+          50: "#eaeaea",
+          100: "#bebebf",
+          200: "#9e9ea0",
+          300: "#727275",
+          400: "#56565a",
+          500: "#2c2c31",
+          600: "#28282d",
+          700: "#1f1f23",
+          800: "#18181b",
+          900: "#121215",
+        },
+        green: {
+          50: "#e6fbef",
+          100: "#b1f1ce",
+          200: "#8cebb6",
+          300: "#57e295",
+          400: "#36dc81",
+          500: "#04d361",
+          600: "#04c058",
+          700: "#039645",
+          800: "#027435",
+          900: "#025929",
+        },
+        pink: {
+          50: "#fff9fd",
+          100: "#ffedf9",
+          200: "#ffe4f6",
+          300: "#ffd7f2",
+          400: "#ffd0ef",
+          500: "#ffc4eb",
+          600: "#e8b2d6",
+          700: "#b58ba7",
+          800: "#8c6c81",
+          900: "#6b5263",
+        },
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
-
+  plugins: [],
+};
 export default config;

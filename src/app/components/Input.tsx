@@ -1,25 +1,28 @@
-import React from "react";
-import { twMerge } from "tailwind-merge";
+import * as React from "react";
+import { cn } from "../lib/utils";
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  icon?: React.ReactNode;
+}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, icon, type, ...props }, ref) => {
     return (
-      <input
-        type={type}
-        autoComplete="off"
-        className={twMerge(
-          "flex h-10 w-full rounded-md border border-gray-200 bg-transparent",
-          " px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent",
-          "file:text-sm file:font-medium placeholder:text-gray-600 focus-visible:outline-none",
-          "focus-visible:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50",
-          className
+      <div className="relative flex items-center">
+        {icon && (
+          <span className="absolute right-3 top-[10px]">{icon}</span>
         )}
-        ref={ref}
-        {...props}
-      />
+        <input
+          type={type}
+          className={cn(
+            "flex text-gray-400 bg-white-50 text-sm h-10 w-full outline-none rounded-md border border-gray-50 p-4 placeholder:text-gray-200  disabled:cursor-not-allowed disabled:opacity-50",
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+      </div>
     );
   }
 );

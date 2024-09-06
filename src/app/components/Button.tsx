@@ -1,25 +1,24 @@
 import { twMerge } from "tailwind-merge";
-interface CustomButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   typeStyle?: "primary" | "secondary";
 }
 
-export default function CustomButton({
+export default function Button({
   typeStyle = "primary",
   children,
   ...props
-}: CustomButtonProps) {
+}: ButtonProps) {
   return (
     <>
       <button
         {...props}
         className={twMerge(
-          "whitespace-nowrap px-4 py-2 rounded-lg font-semibold duration-300 text-sm",
-          typeStyle === "primary" &&
-            "bg-violet-300 text-gray-100 hover:bg-violet-500",
+          "whitespace-nowrap px-4 py-2 rounded-md mt-6 font-semibold w-full duration-300 text-sm",
+          typeStyle === "primary" && "bg-pink-300 text-white-50 hover:bg-pink-500",
           typeStyle === "secondary" &&
-            "bg-transparent border border-gray-200 text-red-700 hover:bg-red-50",
+            "bg-green-500 border text-white hover:bg-green-700",
 
           props.className,
           props.disabled && "bg-gray-400 cursor-not-allowed"

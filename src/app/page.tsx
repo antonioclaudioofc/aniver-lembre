@@ -1,66 +1,58 @@
-"use client";
-
-import CustomButton from "./components/Button";
-import { CalendarPlus } from "lucide-react";
-import BirthCard from "./components/BirthCard";
-import FormEvent from "./components/FormEvent";
-import {
-  DialogHeader,
-  DialogFooter,
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "./components/Dialog";
+import Image from "next/image";
+import moments from "./assets/moments.svg";
+import { Icon } from "./components/Icon";
+import { Input } from "./components/Input";
 import Button from "./components/Button";
-import React from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = React.useState(false);
   return (
-    <>
-      <section className="mx-auto px-24 max-w-7xl">
-        <header className="mt-16 mb-10">
-          <h2 className="text-4xl font-bold">Meu Calendário de Destaque</h2>
-          <h3 className="text-xl font-medium text-gray-700 mt-1 mb-5">
-            Tenha sempre à mão as datas que realmente importam
-          </h3>
-          <hr className="text-gray-200" />
-        </header>
-      </section>
-      <main>
-        <BirthCard initialData={[]} />
-      </main>
-      <div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <CustomButton className="fixed right-16 bottom-16 w-14 h-14 rounded-full">
-              <CalendarPlus />
-            </CustomButton>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md max-h-[90%] overflow-y-auto overflow-x-hidden text-black">
-            <DialogHeader>
-              <DialogTitle>Adicionar Aniversário</DialogTitle>
-              <DialogDescription>
-                Preencha as informações abaixo
-              </DialogDescription>
-            </DialogHeader>
-            <FormEvent isLoading={isLoading} setIsLoading={setIsLoading} />
-            <DialogFooter>
-              <Button
-                className="bg-green-600 hover:bg-green-700"
-                form="form"
-                type="submit"
-                disabled={isLoading}
+    <main className="grid min-h-screen grid-cols-2">
+      <div className="flex flex-col justify-center items-center">
+        <Icon name="today" color="text-pink-500" fill="1" size="4rem" />
+        <h2 className="text-pink-900 text-2xl font-bold mb-2 mt-6">
+          Bem vindo(a) de Volta
+        </h2>
+        <h4 className="text-pink-900 text-sm font-medium">
+          Preencha as informações abaixo
+        </h4>
+        <form className="mt-10" action="#">
+          <fieldset className="flex flex-col gap-4 w-72">
+            <div className="grid w-full items-center gap-1">
+              <label
+                className="text-gray-300 font-bold text-sm"
+                htmlFor="email"
               >
-                Salvar
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                Email
+              </label>
+              <Input type="email" id="email" placeholder="Insira seu e-mail" />
+            </div>
+            <div className="grid w-full items-center gap-1">
+              <label
+                className="text-gray-300 font-bold text-sm"
+                htmlFor="email"
+              >
+                Senha
+              </label>
+              <Input
+                type="email"
+                icon={<Icon name="visibility_off" />}
+                id="email"
+                placeholder="Insira sua senha"
+              />
+            </div>
+          </fieldset>
+          <Button>Entrar</Button>
+        </form>
       </div>
-    </>
+      <div className="bg-pink-100 flex justify-center">
+        <Image
+          className="max-w-xl w-full"
+          src={moments}
+          alt="Moments"
+          width={500}
+          height={500}
+        />
+      </div>
+    </main>
   );
 }
