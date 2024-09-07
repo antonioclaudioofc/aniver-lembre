@@ -36,7 +36,12 @@ export default function Register() {
               <label className="text-gray-300 font-bold text-sm" htmlFor="name">
                 Nome
               </label>
-              <Input type="text" name="name" id="name" placeholder="Insira seu nome" />
+              <Input
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Insira seu nome"
+              />
             </div>
             {state?.errors?.name && <p>{state.errors.name}</p>}
             <div className="grid w-full items-center gap-1">
@@ -91,14 +96,14 @@ export default function Register() {
                     size="1.25rem"
                   />
                 }
-                id="password"
-                name="password"
+                id="confirmPassword"
+                name="confirmPassword"
                 placeholder="Insira sua senha novamente"
               />
             </div>
+
             {state?.errors?.password && (
               <div>
-                <p>Password must:</p>
                 <ul>
                   {state.errors.password.map((error) => (
                     <li key={error}> - {error}</li>
