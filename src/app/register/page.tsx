@@ -6,12 +6,89 @@ import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { Header } from "@/components/Header";
 import partying from "@/assets/partying.svg";
-import { signup } from "@/actions/auth";
-import { useFormState, useFormStatus } from "react-dom";
+import { FormEvent, useState } from "react";
 
 export default function Register() {
-  const [state, action] = useFormState(signup, undefined);
-  const { pending } = useFormStatus();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // async function onSubmit(event: FormEvent<HTMLFormElement>) {
+  //   event.preventDefault();
+  //   setIsLoading(true);
+  //   setError(null);
+
+  //   if (password != confirmPassword) {
+  //     setError("As senhas não coincidem");
+  //     setIsLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData(event.currentTarget);
+  //     const response = await fetch("/api/auth/callback/route", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (!response.ok) {
+  //       setIsLoading(false);
+  //       throw new Error(
+  //         "Erro ao enviar o formuário. Por Favor, tente novamente!"
+  //       );
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData(event.currentTarget);
+      const data = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+        confirmPassword: formData.get("confirmPassword"),
+      };
+
+      const response = await fetch("/api/auth/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      console.log(response);
+
+      if (!response.ok) {
+        setIsLoading(false);
+        throw new Error(
+          "Erro ao enviar o formulário. Por favor, tente novamente!"
+        );
+      }
+
+      // Lógica adicional se necessário (e.g., redirecionar o usuário)
+    } catch (error) {
+      setError("error");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <main className="grid min-h-screen grid-cols-2">
@@ -30,7 +107,7 @@ export default function Register() {
           title="Cadastre-se agora"
           subtitle="Preencha as informações abaixo"
         />
-        <form className="mt-10" action={action}>
+        <form className="mt-10" onSubmit={onSubmit}>
           <fieldset className="grid gap-4 w-72">
             <div className="grid w-full items-center gap-1">
               <label className="text-gray-300 font-bold text-sm" htmlFor="name">
@@ -40,10 +117,12 @@ export default function Register() {
                 type="text"
                 name="name"
                 id="name"
+                value={name}
+                required
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Insira seu nome"
               />
             </div>
-            {state?.errors?.name && <p>{state.errors.name}</p>}
             <div className="grid w-full items-center gap-1">
               <label
                 className="text-gray-300 font-bold text-sm"
@@ -55,10 +134,11 @@ export default function Register() {
                 type="email"
                 name="email"
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Insira seu e-mail"
               />
             </div>
-            {state?.errors?.email && <p>{state.errors.email}</p>}
             <div className="grid w-full items-center gap-1">
               <label
                 className="text-gray-300 font-bold text-sm"
@@ -77,6 +157,8 @@ export default function Register() {
                 }
                 id="password"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Insira sua senha"
               />
             </div>
@@ -98,23 +180,16 @@ export default function Register() {
                 }
                 id="confirmPassword"
                 name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Insira sua senha novamente"
               />
             </div>
-
-            {state?.errors?.password && (
-              <div>
-                <ul>
-                  {state.errors.password.map((error) => (
-                    <li key={error}> - {error}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </fieldset>
-          <Button disabled={pending} type="submit" className="mt-6">
+          <Button disabled={isLoading} type="submit" className="mt-6">
             Cadastrar
           </Button>
+          {error && <div style={{ color: "red" }}>{error}</div>}
           <p className="text-gray-400 mt-4 text-sm text-center">
             Já possui conta?{" "}
             <span className="text-pink-700 cursor-pointer hover:text-pink-600">
