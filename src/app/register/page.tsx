@@ -7,6 +7,9 @@ import Button from "@/components/Button";
 import { Header } from "@/components/Header";
 import partying from "@/assets/partying.svg";
 import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { LOGIN } from "../constants/routes";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -16,34 +19,7 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // async function onSubmit(event: FormEvent<HTMLFormElement>) {
-  //   event.preventDefault();
-  //   setIsLoading(true);
-  //   setError(null);
-
-  //   if (password != confirmPassword) {
-  //     setError("As senhas não coincidem");
-  //     setIsLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const formData = new FormData(event.currentTarget);
-  //     const response = await fetch("/api/auth/callback/route", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       setIsLoading(false);
-  //       throw new Error(
-  //         "Erro ao enviar o formuário. Por Favor, tente novamente!"
-  //       );
-  //     }
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
+  const router = useRouter();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,18 +49,18 @@ export default function Register() {
         body: JSON.stringify(data),
       });
 
-      console.log(response);
-
       if (!response.ok) {
         setIsLoading(false);
         throw new Error(
           "Erro ao enviar o formulário. Por favor, tente novamente!"
         );
       }
-
-      // Lógica adicional se necessário (e.g., redirecionar o usuário)
+      setIsLoading(false);
+      router.push("/");
     } catch (error) {
-      setError("error");
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro desconhecido";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -192,9 +168,12 @@ export default function Register() {
           {error && <div style={{ color: "red" }}>{error}</div>}
           <p className="text-gray-400 mt-4 text-sm text-center">
             Já possui conta?{" "}
-            <span className="text-pink-700 cursor-pointer hover:text-pink-600">
+            <Link
+              href={LOGIN}
+              className="text-pink-700 cursor-pointer hover:text-pink-600"
+            >
               Entrar.
-            </span>
+            </Link>
           </p>
         </form>
       </div>

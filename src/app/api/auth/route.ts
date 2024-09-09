@@ -19,25 +19,35 @@ export async function POST(request: Request) {
     );
 
     const user = userCredential.user;
+
     await updateProfile(user, { displayName: parsed.name });
 
     const token = await getIdToken(user);
 
     const cookieExpiresInSeconds = 60 * 60 * 24 * 1;
 
-    const baseURL = new URL(request.url);
-    const redirectURL = new URL("/", baseURL.origin);
+    const redirectURL = new URL("/", request.url);
 
-    const response = NextResponse.redirect(redirectURL.toString());
-
-    response.headers.set(
-      "Set-Cookie",
-      `token=${token}; Path=/; Max-Age=${cookieExpiresInSeconds}; HttpOnly; Secure; SameSite=Strict`
-    );
+    const response = NextResponse.redirect(redirectURL);
+    response.cookies.set("token", token, {
+      path: "/",
+      maxAge: cookieExpiresInSeconds,
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao processar o registro:", error);
+
+    if (error.code) {
+      return NextResponse.json(
+        { message: `Erro Firebase: ${error.message}` },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { message: "Erro ao processar a solicitação." },
       { status: 500 }

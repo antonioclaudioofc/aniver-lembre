@@ -2,6 +2,8 @@ import { Icon } from "@/components/Icon";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { Header } from "@/components/Header";
+import Link from "next/link";
+import { REGISTER } from "../constants/routes";
 
 export default function Login() {
   return (
@@ -46,9 +48,12 @@ export default function Login() {
         <Button>Entrar</Button>
         <p className="text-gray-400 mt-4 text-sm text-center">
           Não possui uma conta?{" "}
-          <span className="text-pink-700 cursor-pointer hover:text-pink-600">
+          <Link
+            href={REGISTER}
+            className="text-pink-700 cursor-pointer hover:text-pink-600"
+          >
             Cadastre-se agora.
-          </span>
+          </Link>
         </p>
       </form>
     </div>
