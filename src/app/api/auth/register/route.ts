@@ -39,18 +39,21 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error: any) {
-    console.error("Erro ao processar o registro:", error);
-
-    if (error.code) {
-      return NextResponse.json(
-        { message: `Erro Firebase: ${error.message}` },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { message: "Erro ao processar a solicitação." },
-      { status: 500 }
-    );
+    NextResponse.json({ error: error.message }, { status: 400 });
   }
+  // catch (error: any) {
+  //   console.error("Erro ao processar o registro:", error);
+
+  //   if (error.code) {
+  //     return NextResponse.json(
+  //       { message: `Erro Firebase: ${error.message}` },
+  //       { status: 400 }
+  //     );
+  //   }
+
+  //   return NextResponse.json(
+  //     { message: "Erro ao processar a solicitação." },
+  //     { status: 500 }
+  //   );
+  // }
 }

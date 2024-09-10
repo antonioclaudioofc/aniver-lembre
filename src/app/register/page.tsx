@@ -41,7 +41,7 @@ export default function Register() {
         confirmPassword: formData.get("confirmPassword"),
       };
 
-      const response = await fetch("/api/auth/", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,6 +55,12 @@ export default function Register() {
           "Erro ao enviar o formulário. Por favor, tente novamente!"
         );
       }
+
+      // await fetch("/api/auth/session", {
+      //   method: "POST",
+      //   body: JSON.stringify({ response }),
+      // });
+
       setIsLoading(false);
       router.push("/");
     } catch (error) {
