@@ -56,6 +56,16 @@ export default function Register() {
         );
       }
 
+      const dataFirebase = await response.json();
+
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken: dataFirebase.idToken }),
+      });
+
       // await fetch("/api/auth/session", {
       //   method: "POST",
       //   body: JSON.stringify({ response }),

@@ -1,24 +1,31 @@
 import { NextResponse } from "next/server";
+import { initAdmin } from "@/services/firebase-admin.service";
+import { getAuth } from "firebase-admin/auth";
 
 export async function POST(request: Request) {
-  const { token } = await request.json();
+  await initAdmin();
+
+  const { idToken } = await request.json();
+  const cookieExpiresInSeconds = 60 * 60 * 24 * 1; // 1 dias em segundos
 
   try {
-    const cookieExpiresInSeconds = 60 * 60 * 24 * 1;
+    const sessionCookie = await getAuth().createSessionCookie(idToken, {
+      expiresIn: cookieExpiresInSeconds * 1000, // em milissegundos
+    });
 
-    const redirectURL = new URL("/", request.url);
-
-    const response = NextResponse.redirect(redirectURL);
-    response.cookies.set("token", token, {
-      path: "/",
-      maxAge: cookieExpiresInSeconds,
+    const response = NextResponse.json({ status: "success" });
+    response.cookies.set("token", sessionCookie, {
+      maxAge: cookieExpiresInSeconds * 1000,
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
     });
 
     return response;
-  } catch (error: any) {
-    NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error) {
+    console.error("Erro ao criar session cookie:", error);
+    return NextResponse.json(
+      { message: "UNAUTHORIZED REQUEST!" },
+      { status: 401 }
+    );
   }
 }
