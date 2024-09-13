@@ -1,9 +1,15 @@
 import { Icon } from "@/components/Icon";
-import { getUserProfile } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
+
+interface User {
+  uid: string;
+  displayName: string;
+  email: string;
+}
 
 export default function Home() {
-  const auth = getUserProfile();
-  console.log(auth);
+  const user: User = getUser();
+  console.log(user);
   return (
     <nav className="bg-pink-300 flex justify-between items-center h-20 px-24">
       <h2 className="color-pink-900 text-2xl">Eventos</h2>
