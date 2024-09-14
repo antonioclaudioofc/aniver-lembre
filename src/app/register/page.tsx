@@ -10,6 +10,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { LOGIN } from "../constants/routes";
 import { useRouter } from "next/navigation";
+import { signUpWithEmailAndPassword } from "@/lib/firebase/auth";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -27,58 +28,20 @@ export default function Register() {
     setError(null);
 
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem");
+      console.log("As senhas não coincidem");
       setIsLoading(false);
       return;
     }
 
-    try {
-      const formData = new FormData(event.currentTarget);
-      const data = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        confirmPassword: formData.get("confirmPassword"),
-      };
+    const isOk = await signUpWithEmailAndPassword(name, email, password);
+    setIsLoading(false);
 
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        setIsLoading(false);
-        throw new Error(
-          "Erro ao enviar o formulário. Por favor, tente novamente!"
-        );
-      }
-
-      const dataFirebase = await response.json();
-
-      await fetch("/api/auth/session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ idToken: dataFirebase.idToken }),
-      });
-
-      // await fetch("/api/auth/session", {
-      //   method: "POST",
-      //   body: JSON.stringify({ response }),
-      // });
-
-      setIsLoading(false);
+    if (isOk === true) {
       router.push("/");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro desconhecido";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else if (typeof isOk === "string") {
+      console.log(isOk); 
+    } else {
+      console.log("Erro ao registrar! Tente novamente.");
     }
   }
 
