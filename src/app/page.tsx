@@ -1,8 +1,11 @@
+"use client";
 import { Icon } from "@/components/Icon";
-import { getCurrentUser } from "@/lib/firebase/firebase-admin";
+import { useAuth } from "./context/AuthContext";
 
-export default async function Home() {
-  const currentUser = await getCurrentUser();
+export default function Home() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <nav className="bg-pink-300 flex justify-between items-center h-20 px-24">
@@ -15,7 +18,7 @@ export default async function Home() {
           className="mr-4"
         />
         <div className="h-11 w-11 bg-slate-400 rounded-full"></div>
-        <h4 className=" mr-2 ml-3">{currentUser?.displayName}</h4>
+        <h4 className=" mr-2 ml-3">{user?.displayName}</h4>
         <Icon name="keyboard_arrow_down" />
       </div>
     </nav>

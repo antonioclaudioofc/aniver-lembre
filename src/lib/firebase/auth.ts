@@ -27,9 +27,6 @@ export async function signUpWithEmailAndPassword(
       body: JSON.stringify({ idToken }),
     });
 
-    const textResponse = await response.json(); // Obtenha a resposta como texto
-    console.log(textResponse);
-
     if (response.ok) {
       return true;
     } else return false;
