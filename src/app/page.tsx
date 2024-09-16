@@ -4,14 +4,29 @@ import { useAuth } from "./context/AuthContext";
 import { useState } from "react";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
+import { signOut } from "@/lib/firebase/auth";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const togglePopover = () => {
     setIsOpen(!isOpen);
   };
+
+  async function logout() {
+    const isOk = await signOut();
+
+    if (isOk === true) {
+      router.push("/login ");
+    } else if (typeof isOk === "string") {
+      console.log(isOk);
+    } else {
+      console.log("Erro ao registrar! Tente novamente.");
+    }
+  }
 
   if (loading) return <div>Loading...</div>;
 
@@ -81,6 +96,7 @@ export default function Home() {
             <a
               className="flex rounded-l-lg rounded-b-lg gap-3 text-sm items-center text-red-600 font-bold p-4 hover:bg-pink-100"
               href="#"
+              onClick={logout}
             >
               <Icon name="logout" />
               <span>Sair da conta</span>
