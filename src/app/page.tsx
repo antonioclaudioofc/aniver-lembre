@@ -1,16 +1,19 @@
 "use client";
+
 import { Icon } from "@/components/Icon";
 import { useAuth } from "./context/AuthContext";
 import { useState } from "react";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signOut } from "@/lib/firebase/auth";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+
+  if (user?.uid === undefined) redirect("/login");
 
   const togglePopover = () => {
     setIsOpen(!isOpen);
@@ -28,7 +31,13 @@ export default function Home() {
     }
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="grid min-h-screen m-auto">
+        <Icon className="animate-spin" name="progress_activity" />
+        Carregando...
+      </div>
+    );
 
   return (
     <>

@@ -24,3 +24,7 @@
   direction: ltr;
   -webkit-font-smoothing: antialiased;
 }
+
+html {
+  @apply scroll-smooth;
+}

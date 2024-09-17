@@ -38,16 +38,17 @@ export async function signUpWithEmailAndPassword(
     if (error instanceof FirebaseError) {
       switch (error.code) {
         case "auth/email-already-in-use":
-          return "Email already in use. Try logging in instead.";
+          return "E-mail já está em uso.";
         case "auth/invalid-email":
-          return "Invalid email format. Please check your email.";
+          return "Formato de e-mail inválido.";
         case "auth/weak-password":
-          return "Password is too weak. Please use a stronger password.";
+          return "A senha é muito fraca.";
+        case "auth/operation-not-allowed":
+          return "O cadastro com este provedor está desativado.";
         default:
-          return "An error occurred. Please try again.";
+          return "Ocorreu um erro. Por favor, tente novamente.";
       }
     }
-    console.log(error);
     return false;
   }
 }
@@ -72,14 +73,23 @@ export async function signIn(email: string, password: string) {
     if (response.ok) return true;
     else return false;
   } catch (error) {
-    console.log(error);
-
-    if (
-      error instanceof FirebaseError &&
-      error.code === "auth/account-exists-with-different-credential"
-    ) {
-      return "Account already exist with different provider. Try logging in with other provider and link your account";
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case "auth/user-not-found":
+          return "Nenhum usuário encontrado com este e-mail.";
+        case "auth/wrong-password":
+          return "Senha incorreta. Por favor, tente novamente.";
+        case "auth/user-disabled":
+          return "Esta conta foi desativada por um administrador.";
+        case "auth/too-many-requests":
+          return "Muitas tentativas de login falharam. Por favor, tente novamente mais tarde.";
+        case "auth/account-exists-with-different-credential":
+          return "A conta já existe com outro provedor. Tente fazer login com outro provedor e vincular sua conta.";
+        default:
+          return "Ocorreu um erro. Por favor, tente novamente.";
+      }
     }
+
     return false;
   }
 }

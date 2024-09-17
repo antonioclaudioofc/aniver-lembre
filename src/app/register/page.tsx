@@ -11,8 +11,11 @@ import Link from "next/link";
 import { LOGIN } from "../constants/routes";
 import { useRouter } from "next/navigation";
 import { signUpWithEmailAndPassword } from "@/lib/firebase/auth";
+import { toast } from "sonner";
+import clsx from "clsx";
 
 export default function Register() {
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,13 +25,17 @@ export default function Register() {
 
   const router = useRouter();
 
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
 
     if (password !== confirmPassword) {
-      console.log("As senhas não coincidem");
+      toast("As senhas não coincidem");
       setIsLoading(false);
       return;
     }
@@ -39,15 +46,22 @@ export default function Register() {
     if (isOk === true) {
       router.push("/");
     } else if (typeof isOk === "string") {
-      console.log(isOk); 
+      toast(isOk);
     } else {
-      console.log("Erro ao registrar! Tente novamente.");
+      toast("Erro ao registrar! Tente novamente.");
     }
   }
 
   return (
-    <main className="grid min-h-screen grid-cols-2">
-      <div className="bg-pink-100 flex justify-center">
+    <main
+      className={clsx("grid min-h-screen grid-cols-2", "max-md:grid-cols-1")}
+    >
+      <div
+        className={clsx(
+          "bg-pink-100 flex justify-center px-6",
+          "max-md:hidden"
+        )}
+      >
         <Image
           className="max-w-xl w-full"
           src={partying}
@@ -102,13 +116,23 @@ export default function Register() {
                 Senha
               </label>
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 icon={
-                  <Icon
-                    className="text-gray-200 cursor-pointer hover:text-gray-300"
-                    name="visibility_off"
-                    size="1.25rem"
-                  />
+                  showPassword ? (
+                    <Icon
+                      className="text-gray-200 cursor-pointer hover:text-gray-300"
+                      name="visibility_off"
+                      size="1.25rem"
+                      onClick={handleTogglePassword}
+                    />
+                  ) : (
+                    <Icon
+                      className="text-gray-200 cursor-pointer hover:text-gray-300"
+                      name="visibility"
+                      size="1.25rem"
+                      onClick={handleTogglePassword}
+                    />
+                  )
                 }
                 id="password"
                 name="password"
@@ -125,13 +149,23 @@ export default function Register() {
                 Confirmação de senha
               </label>
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 icon={
-                  <Icon
-                    className="text-gray-200 cursor-pointer hover:text-gray-300"
-                    name="visibility_off"
-                    size="1.25rem"
-                  />
+                  showPassword ? (
+                    <Icon
+                      className="text-gray-200 cursor-pointer hover:text-gray-300"
+                      name="visibility_off"
+                      size="1.25rem"
+                      onClick={handleTogglePassword}
+                    />
+                  ) : (
+                    <Icon
+                      className="text-gray-200 cursor-pointer hover:text-gray-300"
+                      name="visibility"
+                      size="1.25rem"
+                      onClick={handleTogglePassword}
+                    />
+                  )
                 }
                 id="confirmPassword"
                 name="confirmPassword"
@@ -141,8 +175,19 @@ export default function Register() {
               />
             </div>
           </fieldset>
-          <Button disabled={isLoading} type="submit" className="mt-6">
-            Cadastrar
+          <Button disabled={isLoading} className="font-bold mt-6" type="submit">
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2 ">
+                <Icon
+                  size="1.25rem"
+                  className="animate-spin"
+                  name="progress_activity"
+                />
+                <span className="text-sm font-bold">Carregando ...</span>
+              </div>
+            ) : (
+              "Cadastrar"
+            )}
           </Button>
           {error && <div style={{ color: "red" }}>{error}</div>}
           <p className="text-gray-400 mt-4 text-sm text-center">

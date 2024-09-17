@@ -21,7 +21,7 @@ export default function Button({
             "bg-green-500 border text-white hover:bg-green-700",
 
           props.className,
-          props.disabled && "bg-gray-400 cursor-not-allowed"
+          props.disabled && "bg-gray-400 cursor-not-allowed hover:bg-gray-300"
         )}
       >
         {children}

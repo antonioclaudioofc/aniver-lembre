@@ -9,25 +9,25 @@ import { REGISTER } from "../constants/routes";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/firebase/auth";
+import { toast } from "sonner";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const router = useRouter();
 
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
     setError("");
-
-    if (!email || !password) {
-      console.log("Preencha os campos");
-      setIsLoading(false);
-      return;
-    }
 
     const isOk = await signIn(email, password);
     setIsLoading(false);
@@ -35,9 +35,9 @@ export default function Login() {
     if (isOk === true) {
       router.push("/");
     } else if (typeof isOk === "string") {
-      console.log(isOk);
+      toast(isOk);
     } else {
-      console.log("Erro ao registrar! Tente novamente.");
+      toast("Erro ao registrar, Tente novamente!");
     }
   }
 
@@ -49,7 +49,7 @@ export default function Login() {
         subtitle="Preencha as informações abaixo"
       />
       <form className="mt-10" onSubmit={onSubmit}>
-        <fieldset className="grid gap-4 w-72">
+        <fieldset className="grid gap-4 w-full max-w-72">
           <div className="grid w-full items-center gap-1">
             <label className="text-gray-300 font-bold text-sm" htmlFor="email">
               Email
@@ -72,13 +72,24 @@ export default function Login() {
               Senha
             </label>
             <Input
-              type="password"
+              type={!showPassword ? "text" : "password"}
               icon={
-                <Icon
-                  className="text-gray-200 cursor-pointer hover:text-gray-300"
-                  name="visibility_off"
-                  size="1.25rem"
-                />
+                !showPassword ? (
+                  <Icon
+                    className="text-gray-200 cursor-pointer hover:text-gray-300"
+                    name="visibility_off"
+                    size="1.25rem"
+                    onClick={handleTogglePassword}
+
+                  />
+                ) : (
+                  <Icon
+                    className="text-gray-200 cursor-pointer hover:text-gray-300"
+                    name="visibility"
+                    size="1.25rem"
+                    onClick={handleTogglePassword}
+                  />
+                )
               }
               id="password"
               name="password"
@@ -92,9 +103,21 @@ export default function Login() {
         <span className="text-pink-700 text-sm cursor-pointer block mt-2 mb-5 text-right hover:text-pink-600">
           Esqueceu a senha?
         </span>
-        <Button disabled={isLoading} type="submit">
-          Entrar
+        <Button disabled={isLoading} className="font-bold" type="submit">
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 ">
+              <Icon
+                size="1.25rem"
+                className="animate-spin"
+                name="progress_activity"
+              />
+              <span className="text-sm font-bold">Carregando ...</span>
+            </div>
+          ) : (
+            "Entrar"
+          )}
         </Button>
+
         {error && <div style={{ color: "red" }}>{error}</div>}
 
         <p className="text-gray-400 mt-4 text-sm text-center">
