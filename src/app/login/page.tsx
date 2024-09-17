@@ -72,9 +72,9 @@ export default function Login() {
               Senha
             </label>
             <Input
-              type={!showPassword ? "text" : "password"}
+              type={showPassword ? "text" : "password"}
               icon={
-                !showPassword ? (
+                showPassword ? (
                   <Icon
                     className="text-gray-200 cursor-pointer hover:text-gray-300"
                     name="visibility_off"
@@ -105,14 +105,11 @@ export default function Login() {
         </span>
         <Button disabled={isLoading} className="font-bold" type="submit">
           {isLoading ? (
-            <div className="flex items-center justify-center gap-2 ">
               <Icon
-                size="1.25rem"
+                size="0.75rem"
                 className="animate-spin"
                 name="progress_activity"
               />
-              <span className="text-sm font-bold">Carregando ...</span>
-            </div>
           ) : (
             "Entrar"
           )}

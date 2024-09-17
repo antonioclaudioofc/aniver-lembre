@@ -177,14 +177,11 @@ export default function Register() {
           </fieldset>
           <Button disabled={isLoading} className="font-bold mt-6" type="submit">
             {isLoading ? (
-              <div className="flex items-center justify-center gap-2 ">
-                <Icon
-                  size="1.25rem"
-                  className="animate-spin"
-                  name="progress_activity"
-                />
-                <span className="text-sm font-bold">Carregando ...</span>
-              </div>
+              <Icon
+                size="0.75rem"
+                className="animate-spin"
+                name="progress_activity"
+              />
             ) : (
               "Cadastrar"
             )}
