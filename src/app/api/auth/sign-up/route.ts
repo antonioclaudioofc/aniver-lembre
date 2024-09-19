@@ -16,6 +16,7 @@ export async function POST(request: Request) {
       maxAge: expiresIn,
       httpOnly: true,
       secure: true,
+      sameSite: "none",
       path: "/",
     });
 

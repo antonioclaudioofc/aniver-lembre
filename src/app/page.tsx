@@ -2,14 +2,16 @@
 
 import { Icon } from "@/components/Icon";
 import { useAuth } from "./context/AuthContext";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import clsx from "clsx";
 import { AuthController } from "@/controllers/auth.controller";
-// import { useHookFormMask } from "use-mask-input";
+import dayjs from "dayjs";
+import { BirthdaysController } from "@/controllers/birthdays.controller";
+import { BirthdayCard } from "@/components/BirthdayCard";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -21,8 +23,6 @@ export default function Home() {
   const togglePopover = () => {
     setIsOpenPopover(!isOpenPopover);
   };
-
-  // const registerWithMask = useHookFormMask({ birthdayDate, notificationTime });
 
   async function logout() {
     const controller = await AuthController.getInstance();
@@ -161,18 +161,15 @@ export default function Home() {
             "max-sm:p-0"
           )}
         >
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
-          <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
+          <BirthdayCard userId={user.uid} />
         </div>
       </div>
       {isOpenDialog && (
-        <Dialog isOpenDialog={isOpenDialog} setIsOpenDialog={setIsOpenDialog} />
+        <Dialog
+          isOpenDialog={isOpenDialog}
+          setIsOpenDialog={setIsOpenDialog}
+          userId={user.uid}
+        />
       )}
     </>
   );
@@ -181,13 +178,61 @@ export default function Home() {
 interface DialogProps {
   isOpenDialog: boolean;
   setIsOpenDialog: (isOpen: boolean) => void;
+  userId: string;
 }
 
 function Dialog(props: DialogProps) {
   if (!props.isOpenDialog) return null;
+
+  function isValidBirthdayDate(): boolean {
+    const isDateValid = dayjs(birthdayDate, "YYYY-MM-DD");
+
+    if (!isDateValid.isValid()) {
+      return false;
+    }
+
+    const today = dayjs().startOf("day");
+
+    if (isDateValid.isAfter(today)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+
+    const birthdayDateValid = isValidBirthdayDate();
+
+    if (!birthdayDateValid) {
+      toast("Data inválida.");
+      setIsLoading(false);
+      return;
+    }
+
+    const controllerBirthday = await BirthdaysController.getInstance();
+    const isOk = await controllerBirthday.registerBirthday(
+      name,
+      birthdayDate,
+      notificationTime,
+      props.userId
+    );
+    setIsLoading(false);
+
+    if (isOk === true) {
+      toast("Adicionado com sucesso");
+      props.setIsOpenDialog(false);
+    } else {
+      toast("Erro ao adicionar! Tente novamente");
+    }
+  }
+
   const [name, setName] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
   const [notificationTime, setNotificationTime] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 p-6 ">
@@ -200,7 +245,7 @@ function Dialog(props: DialogProps) {
             name="close"
           />
         </div>
-        <div className="flex flex-col max-w-80 gap-4">
+        <form onSubmit={onSubmit} className="flex flex-col max-w-80 gap-4">
           <div className="grid w-full items-center gap-1">
             <label className="text-gray-300 font-bold text-sm" htmlFor="email">
               Nome
@@ -210,6 +255,7 @@ function Dialog(props: DialogProps) {
               name="name"
               id="name"
               value={name}
+              required
               onChange={(e) => setName(e.target.value)}
               placeholder="Insira o nome"
             />
@@ -222,6 +268,7 @@ function Dialog(props: DialogProps) {
               type="date"
               name="birthdayDate"
               id="birthdayDate"
+              required
               value={birthdayDate}
               onChange={(e) => setBirthdayDate(e.target.value)}
             />
@@ -235,13 +282,26 @@ function Dialog(props: DialogProps) {
               name="notificationTime"
               id="notificationTime"
               value={notificationTime}
+              required
               onChange={(e) => setNotificationTime(e.target.value)}
             />
           </div>
-          <Button className="font-bold text-base mt-6 p-3 bg-green-300 hover:bg-green-200 transition-all ease-linear" type="submit">
-            Salvar
+          <Button
+            disabled={isLoading}
+            className="font-bold text-base mt-6 p-3 bg-green-300 hover:bg-green-200 transition-all ease-linear"
+            type="submit"
+          >
+            {isLoading ? (
+              <Icon
+                size="0.75rem"
+                className="animate-spin"
+                name="progress_activity"
+              />
+            ) : (
+              "Salvar"
+            )}
           </Button>
-        </div>
+        </form>
       </div>
     </div>
   );
