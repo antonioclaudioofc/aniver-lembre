@@ -6,21 +6,27 @@ import { useState } from "react";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { redirect, useRouter } from "next/navigation";
-import { signOut } from "@/lib/firebase/auth";
 import { toast } from "sonner";
 import clsx from "clsx";
+import { AuthController } from "@/controllers/auth.controller";
+// import { useHookFormMask } from "use-mask-input";
 
 export default function Home() {
   const { user, loading } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [isOpenPopover, setIsOpenPopover] = useState(false);
+
   const togglePopover = () => {
-    setIsOpen(!isOpen);
+    setIsOpenPopover(!isOpenPopover);
   };
 
+  // const registerWithMask = useHookFormMask({ birthdayDate, notificationTime });
+
   async function logout() {
-    const isOk = await signOut();
+    const controller = await AuthController.getInstance();
+    const isOk = await controller.signOut();
 
     if (isOk === true) {
       router.push("/login ");
@@ -74,7 +80,7 @@ export default function Home() {
                 </h4>
                 <Icon name="keyboard_arrow_down" className="cursor-pointer" />
               </div>
-              {isOpen && (
+              {isOpenPopover && (
                 <div className="bg-pink-200 rounded-lg absolute top-20 z-50 right-0 hover:bg-none max-w-60">
                   <div className="flex flex-col border-pink-300 w-full">
                     <a
@@ -129,7 +135,10 @@ export default function Home() {
             />
             <Icon name="filter_list" />
           </div>
-          <Button className="flex items-center w-max bg-green-300 text-white-50 hover:bg-green-200 p-3">
+          <Button
+            onClick={() => setIsOpenDialog(true)}
+            className="flex items-center w-max bg-green-300 text-white-50 hover:bg-green-200 p-3"
+          >
             <Icon size="1.25rem" name="add" />
             Adicionar evento
           </Button>
@@ -162,6 +171,78 @@ export default function Home() {
           <div className="w-56 h-52 bg-pink-100 border-pink-200 rounded-xl"></div>
         </div>
       </div>
+      {isOpenDialog && (
+        <Dialog isOpenDialog={isOpenDialog} setIsOpenDialog={setIsOpenDialog} />
+      )}
     </>
+  );
+}
+
+interface DialogProps {
+  isOpenDialog: boolean;
+  setIsOpenDialog: (isOpen: boolean) => void;
+}
+
+function Dialog(props: DialogProps) {
+  if (!props.isOpenDialog) return null;
+  const [name, setName] = useState("");
+  const [birthdayDate, setBirthdayDate] = useState("");
+  const [notificationTime, setNotificationTime] = useState("");
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 p-6 ">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-96 w-full bg-pink-100">
+        <div className="flex items-center justify-between text-pink-900 mb-10">
+          <h3 className="text-xl font-bold">Adicionar Aniversário</h3>
+          <Icon
+            className="hover:opacity-50 transition-all ease-in cursor-pointer"
+            onClick={() => props.setIsOpenDialog(false)}
+            name="close"
+          />
+        </div>
+        <div className="flex flex-col max-w-80 gap-4">
+          <div className="grid w-full items-center gap-1">
+            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
+              Nome
+            </label>
+            <Input
+              type="text"
+              name="name"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Insira o nome"
+            />
+          </div>
+          <div className="grid w-full items-center gap-1">
+            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
+              Data de nascimento
+            </label>
+            <Input
+              type="date"
+              name="birthdayDate"
+              id="birthdayDate"
+              value={birthdayDate}
+              onChange={(e) => setBirthdayDate(e.target.value)}
+            />
+          </div>
+          <div className="grid w-full items-center gap-1">
+            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
+              Horário de notificação
+            </label>
+            <Input
+              type="time"
+              name="notificationTime"
+              id="notificationTime"
+              value={notificationTime}
+              onChange={(e) => setNotificationTime(e.target.value)}
+            />
+          </div>
+          <Button className="font-bold text-base mt-6 p-3 bg-green-300 hover:bg-green-200 transition-all ease-linear" type="submit">
+            Salvar
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

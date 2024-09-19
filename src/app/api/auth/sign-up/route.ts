@@ -1,7 +1,6 @@
-// src/app/api/auth/sign-up/route.ts
-import { createSessionCookie } from "@/lib/firebase/firebase-admin";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { createSessionCookie } from "@/services/firebase-admin.service";
 
 export async function POST(request: Request) {
   try {

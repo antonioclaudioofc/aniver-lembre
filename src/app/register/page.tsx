@@ -10,9 +10,9 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { LOGIN } from "../constants/routes";
 import { useRouter } from "next/navigation";
-import { signUpWithEmailAndPassword } from "@/lib/firebase/auth";
 import { toast } from "sonner";
 import clsx from "clsx";
+import { AuthController } from "@/controllers/auth.controller";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,8 +39,12 @@ export default function Register() {
       setIsLoading(false);
       return;
     }
-
-    const isOk = await signUpWithEmailAndPassword(name, email, password);
+    const controller = await AuthController.getInstance();
+    const isOk = await controller.signUpWithEmailAndPassword(
+      name,
+      email,
+      password
+    );
     setIsLoading(false);
 
     if (isOk === true) {

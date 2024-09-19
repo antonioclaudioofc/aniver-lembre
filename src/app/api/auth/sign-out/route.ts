@@ -1,4 +1,4 @@
-import { rekoveAllSessions } from "@/lib/firebase/firebase-admin";
+import { rekoveAllSessions } from "@/services/firebase-admin.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 

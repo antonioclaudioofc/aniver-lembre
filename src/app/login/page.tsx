@@ -8,8 +8,8 @@ import Link from "next/link";
 import { REGISTER } from "../constants/routes";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/firebase/auth";
 import { toast } from "sonner";
+import { AuthController } from "@/controllers/auth.controller";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -29,7 +29,8 @@ export default function Login() {
     setIsLoading(true);
     setError("");
 
-    const isOk = await signIn(email, password);
+    const controller = await AuthController.getInstance();
+    const isOk = await controller.signIn(email, password);
     setIsLoading(false);
 
     if (isOk === true) {
@@ -80,7 +81,6 @@ export default function Login() {
                     name="visibility_off"
                     size="1.25rem"
                     onClick={handleTogglePassword}
-
                   />
                 ) : (
                   <Icon
@@ -105,11 +105,11 @@ export default function Login() {
         </span>
         <Button disabled={isLoading} className="font-bold" type="submit">
           {isLoading ? (
-              <Icon
-                size="0.75rem"
-                className="animate-spin"
-                name="progress_activity"
-              />
+            <Icon
+              size="0.75rem"
+              className="animate-spin"
+              name="progress_activity"
+            />
           ) : (
             "Entrar"
           )}
