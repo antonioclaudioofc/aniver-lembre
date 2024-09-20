@@ -2,7 +2,7 @@
 
 import { Icon } from "@/components/Icon";
 import { useAuth } from "./context/AuthContext";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { redirect, useRouter } from "next/navigation";
@@ -24,16 +24,12 @@ export default function Home() {
     setIsOpenPopover(!isOpenPopover);
   };
 
-  const toggleDialog = () => {
-    setIsOpenDialog(!isOpenDialog);
-  };
-
   async function logout() {
     const controller = await AuthController.getInstance();
     const isOk = await controller.signOut();
 
     if (isOk === true) {
-      router.push("/login ");
+      router.push("/login");
     } else if (typeof isOk === "string") {
       toast(isOk);
     } else {
@@ -55,7 +51,7 @@ export default function Home() {
       </div>
     );
 
-  if (user?.uid === undefined) redirect("/login");
+  if (!user?.uid) redirect("/login");
 
   return (
     <>
@@ -140,7 +136,7 @@ export default function Home() {
             <Icon name="filter_list" />
           </div>
           <Button
-            onClick={toggleDialog}
+            onClick={() => setIsOpenDialog(true)}
             className="flex items-center w-max bg-green-300 text-white-50 hover:bg-green-200 p-3"
           >
             <Icon size="1.25rem" name="add" />
@@ -148,13 +144,6 @@ export default function Home() {
           </Button>
         </div>
       </div>
-      {isOpenDialog && (
-        <Dialog
-          isOpenDialog={isOpenDialog}
-          setIsOpenDialog={setIsOpenDialog}
-          userId={user.uid}
-        />
-      )}
       <div
         className={clsx(
           "w-full py-6",
@@ -175,6 +164,13 @@ export default function Home() {
           <BirthdayCard userId={user.uid} />
         </div>
       </div>
+      {isOpenDialog && (
+        <Dialog
+          isOpenDialog={isOpenDialog}
+          setIsOpenDialog={setIsOpenDialog}
+          userId={user.uid}
+        />
+      )}
     </>
   );
 }
@@ -185,8 +181,13 @@ interface DialogProps {
   userId: string;
 }
 
-function Dialog(props: DialogProps) {
-  if (!props.isOpenDialog) return null;
+function Dialog({ isOpenDialog, setIsOpenDialog, userId }: DialogProps) {
+  const [name, setName] = useState("");
+  const [birthdayDate, setBirthdayDate] = useState("");
+  const [notificationTime, setNotificationTime] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (!isOpenDialog) return null;
 
   function isValidBirthdayDate(): boolean {
     const isDateValid = dayjs(birthdayDate, "YYYY-MM-DD");
@@ -221,22 +222,17 @@ function Dialog(props: DialogProps) {
       name,
       birthdayDate,
       notificationTime,
-      props.userId
+      userId
     );
     setIsLoading(false);
 
     if (isOk === true) {
       toast("Adicionado com sucesso");
-      props.setIsOpenDialog(false);
+      setIsOpenDialog(false);
     } else {
       toast("Erro ao adicionar! Tente novamente");
     }
   }
-
-  const [name, setName] = useState("");
-  const [birthdayDate, setBirthdayDate] = useState("");
-  const [notificationTime, setNotificationTime] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 p-6 ">
@@ -245,7 +241,7 @@ function Dialog(props: DialogProps) {
           <h3 className="text-xl font-bold">Adicionar Aniversário</h3>
           <Icon
             className="hover:opacity-50 transition-all ease-in cursor-pointer"
-            onClick={() => props.setIsOpenDialog(false)}
+            onClick={() => setIsOpenDialog(false)}
             name="close"
           />
         </div>
