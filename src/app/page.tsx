@@ -148,6 +148,13 @@ export default function Home() {
           </Button>
         </div>
       </div>
+      {isOpenDialog && (
+        <Dialog
+          isOpenDialog={isOpenDialog}
+          setIsOpenDialog={setIsOpenDialog}
+          userId={user.uid}
+        />
+      )}
       <div
         className={clsx(
           "w-full py-6",
@@ -168,13 +175,6 @@ export default function Home() {
           <BirthdayCard userId={user.uid} />
         </div>
       </div>
-      {isOpenDialog && (
-        <Dialog
-          isOpenDialog={isOpenDialog}
-          setIsOpenDialog={setIsOpenDialog}
-          userId={user.uid}
-        />
-      )}
     </>
   );
 }
