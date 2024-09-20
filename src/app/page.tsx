@@ -24,6 +24,10 @@ export default function Home() {
     setIsOpenPopover(!isOpenPopover);
   };
 
+  const toggleDialog = () => {
+    setIsOpenDialog(!isOpenDialog);
+  };
+
   async function logout() {
     const controller = await AuthController.getInstance();
     const isOk = await controller.signOut();
@@ -136,7 +140,7 @@ export default function Home() {
             <Icon name="filter_list" />
           </div>
           <Button
-            onClick={() => setIsOpenDialog(true)}
+            onClick={toggleDialog}
             className="flex items-center w-max bg-green-300 text-white-50 hover:bg-green-200 p-3"
           >
             <Icon size="1.25rem" name="add" />
