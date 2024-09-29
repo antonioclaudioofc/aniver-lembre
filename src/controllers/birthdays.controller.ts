@@ -1,5 +1,12 @@
 import { firestore } from "@/services/firestore.service";
-import { addDoc, collection, doc, onSnapshot, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 
 export class BirthdaysController {
   static instance: BirthdaysController | null = null;
@@ -35,6 +42,32 @@ export class BirthdaysController {
       return true;
     } catch (error) {
       console.error("Error adding birthday: ", error);
+      return false;
+    }
+  }
+
+  async updateBirthday(
+    id: string,
+    name: string,
+    birthdayDate: string,
+    notificationTime: string,
+    userId: string
+  ) {
+    try {
+      const birthdayDocRef = doc(
+        firestore,
+        `users/${userId}/birthdays/${id}`
+      );
+
+      await updateDoc(birthdayDocRef, {
+        name,
+        birthdayDate,
+        notificationTime,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error updating birthday: ", error);
       return false;
     }
   }
