@@ -1,28 +1,50 @@
 "use client";
 
-import { Icon } from "@/components/Icon";
 import { useAuth } from "./context/AuthContext";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState } from "react";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { redirect, useRouter } from "next/navigation";
-import { toast } from "sonner";
 import clsx from "clsx";
 import { AuthController } from "@/controllers/auth.controller";
 import dayjs from "dayjs";
 import { BirthdaysController } from "@/controllers/birthdays.controller";
 import { BirthdayCard } from "@/components/BirthdayCard";
+import { Toast } from "@/components/Toast";
+import {
+  CaretDown,
+  CaretUp,
+  CircleNotch,
+  MagnifyingGlass,
+  Plus,
+  SignOut,
+  X,
+} from "@phosphor-icons/react";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [isOpenPopover, setIsOpenPopover] = useState(false);
+  const [isOpenDropdown, setIsOpenDropdown] = useState(false);
 
-  const togglePopover = () => {
-    setIsOpenPopover(!isOpenPopover);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [alertType, setAlertType] = useState<"check" | "error">("check");
+
+  const toggleDropdown = () => {
+    setIsOpenDropdown(!isOpenDropdown);
   };
+
+  function showToastMessage(message: string, type: "check" | "error") {
+    setToastMessage(message);
+    setAlertType(type);
+    setShowToast(true);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  }
 
   async function logout() {
     const controller = await AuthController.getInstance();
@@ -31,9 +53,9 @@ export default function Home() {
     if (isOk === true) {
       router.push("/login");
     } else if (typeof isOk === "string") {
-      toast(isOk);
+      showToastMessage(isOk, "error");
     } else {
-      toast("Erro ao registrar! Tente novamente.");
+      showToastMessage("Erro ao registrar! Tente novamente.", "error");
     }
   }
 
@@ -41,12 +63,7 @@ export default function Home() {
     return (
       <div className="flex justify-center items-center min-h-screen bg-pink-50 m-auto">
         <div className="w-max flex items-center gap-2">
-          <Icon
-            className="text-blue-400 animate-spin"
-            size="2rem"
-            name="progress_activity"
-          />
-          <span className="font-bold text-xl text-gray-400">Carregando...</span>
+          <CircleNotch className="text-blue-600 animate-spin" size={64} />
         </div>
       </div>
     );
@@ -60,55 +77,50 @@ export default function Home() {
       >
         <div className="flex justify-between mx-auto items-center h-20 max-w-7xl">
           <h2 className="color-pink-900 font-bold text-2xl">Eventos</h2>
-          <div className="flex items-center">
-            <Icon
-              fill="0"
-              name="notifications_unread"
-              color="color-yellow-300"
-              className="mr-4"
-            />
-            <div className="relative">
-              <div
-                className="cursor-pointer flex items-center hover:opacity-80 relative"
-                onClick={togglePopover}
-              >
-                <div className="h-11 w-11 bg-slate-400 rounded-full"></div>
-                <h4
-                  className={clsx("mr-2 font-semibold ml-3", "max-md:hidden")}
-                >
-                  {user?.displayName}
-                </h4>
-                <Icon name="keyboard_arrow_down" className="cursor-pointer" />
-              </div>
-              {isOpenPopover && (
-                <div className="bg-pink-200 rounded-lg absolute top-20 z-50 right-0 hover:bg-none max-w-60">
-                  <div className="flex flex-col border-pink-300 w-full">
-                    <a
-                      className="flex rounded-r-lg rounded-l-lg gap-3 w-full items-center font-bold p-4 hover:bg-pink-100"
-                      href="#"
-                    >
-                      <Icon name="settings" />
-                      <div className="flex flex-col gap-1">
-                        <span className="text-sm text-gray-600">
-                          Minha Conta
-                        </span>
-                        <span className="text-xs text-gray-300">
-                          Gerenciar dados e preferências
-                        </span>
-                      </div>
-                    </a>
-                    <a
-                      className="flex rounded-l-lg rounded-b-lg gap-3 text-sm items-center text-red-600 font-bold p-4 hover:bg-pink-100"
-                      href="#"
-                      onClick={logout}
-                    >
-                      <Icon name="logout" />
-                      <span>Sair da conta</span>
-                    </a>
-                  </div>
-                </div>
+          <div className="relative">
+            <div
+              className="flex items-center gap-2 cursor-pointer transition-all ease-linear hover:opacity-75"
+              onClick={toggleDropdown}
+            >
+              <div className="h-11 w-11 rounded-full bg-gray-200"></div>
+              <h3 className="font-medium">
+                {loading ? "Carregando ..." : user?.displayName}
+              </h3>
+              {!isOpenDropdown ? (
+                <CaretDown size={16} />
+              ) : (
+                <CaretUp size={16} />
               )}
             </div>
+
+            {isOpenDropdown && (
+              <div className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-2">
+                <ul
+                  className="py-2 text-sm text-gray-700"
+                  aria-labelledby="dropdownDefaultButton"
+                >
+                  <li
+                    className="px-4 py-2 text-red-500 hover:bg-gray-100 flex items-center gap-2 cursor-pointer"
+                    onClick={logout}
+                  >
+                    {loading ? (
+                      <div className="mx-auto">
+                        <CircleNotch
+                          weight="bold"
+                          size={20}
+                          className="text-green-300 animate-spin"
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <SignOut size={24} weight="fill" />
+                        <span className="font-bold">Sair da conta</span>{" "}
+                      </>
+                    )}
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </nav>
@@ -120,26 +132,32 @@ export default function Home() {
             "max-sm:px-0"
           )}
         >
-          <div
-            className={clsx(
-              "flex items-center gap-6",
-              "max-lg:gap-2 max-md:justify-center"
-            )}
-          >
-            <Input
-              className={clsx("w-96", "max-md:w-60")}
-              type="text"
-              icon={<Icon size="1.25rem" name="search" />}
-              id="search"
-              placeholder="Pesquisar..."
-            />
-            <Icon name="filter_list" />
-          </div>
+          <form className="max-w-md w-96">
+            <label
+              htmlFor="search"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only"
+            >
+              Pesquisar
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <MagnifyingGlass className="text-gray-400" size={20} />
+              </div>
+              <Input
+                className=" ps-10"
+                id="search"
+                name="search"
+                type="search"
+                placeholder="Pesquisar ..."
+              />
+            </div>
+          </form>
+
           <Button
             onClick={() => setIsOpenDialog(true)}
-            className="flex items-center w-max bg-green-300 text-white-50 hover:bg-green-200 p-3"
+            className="flex items-center w-max bg-green-300 gap-3 text-white-50 hover:bg-green-200 p-3"
           >
-            <Icon size="1.25rem" name="add" />
+            <Plus size={20} />
             Adicionar evento
           </Button>
         </div>
@@ -169,8 +187,11 @@ export default function Home() {
           isOpenDialog={isOpenDialog}
           setIsOpenDialog={setIsOpenDialog}
           userId={user.uid}
+          showToastMessage={showToastMessage}
         />
       )}
+
+      {showToast && <Toast typeAlert={alertType}>{toastMessage}</Toast>}
     </>
   );
 }
@@ -179,9 +200,15 @@ interface DialogProps {
   isOpenDialog: boolean;
   setIsOpenDialog: (isOpen: boolean) => void;
   userId: string;
+  showToastMessage: (message: string, type: "check" | "error") => void;
 }
 
-function Dialog({ isOpenDialog, setIsOpenDialog, userId }: DialogProps) {
+function Dialog({
+  isOpenDialog,
+  setIsOpenDialog,
+  userId,
+  showToastMessage,
+}: DialogProps) {
   const [name, setName] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
   const [notificationTime, setNotificationTime] = useState("");
@@ -212,7 +239,8 @@ function Dialog({ isOpenDialog, setIsOpenDialog, userId }: DialogProps) {
     const birthdayDateValid = isValidBirthdayDate();
 
     if (!birthdayDateValid) {
-      toast("Data inválida.");
+      showToastMessage("Data inválida", "error");
+
       setIsLoading(false);
       return;
     }
@@ -227,78 +255,64 @@ function Dialog({ isOpenDialog, setIsOpenDialog, userId }: DialogProps) {
     setIsLoading(false);
 
     if (isOk === true) {
-      toast("Adicionado com sucesso");
+      showToastMessage("Adicionado com sucesso", "check");
+
       setIsOpenDialog(false);
     } else {
-      toast("Erro ao adicionar! Tente novamente");
+      showToastMessage("Erro ao adicionar! Tente novamente", "error");
     }
   }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 p-6 ">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-96 w-full bg-pink-100">
-        <div className="flex items-center justify-between text-pink-900 mb-10">
+      <div className="rounded-lg shadow-lg p-8 max-w-96 w-full bg-white">
+        <div className="flex items-center justify-between text-pink-950 mb-10">
           <h3 className="text-xl font-bold">Adicionar Aniversário</h3>
-          <Icon
+          <X
             className="hover:opacity-50 transition-all ease-in cursor-pointer"
+            size={24}
             onClick={() => setIsOpenDialog(false)}
-            name="close"
           />
         </div>
         <form onSubmit={onSubmit} className="flex flex-col max-w-80 gap-4">
           <div className="grid w-full items-center gap-1">
-            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
-              Nome
-            </label>
+            <label htmlFor="name">Nome</label>
             <Input
               type="text"
-              name="name"
               id="name"
+              name="name"
               value={name}
-              required
               onChange={(e) => setName(e.target.value)}
-              placeholder="Insira o nome"
+              required
             />
           </div>
           <div className="grid w-full items-center gap-1">
-            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
-              Data de nascimento
-            </label>
+            <label htmlFor="birthdayDate">Data de Nascimento</label>
             <Input
               type="date"
-              name="birthdayDate"
               id="birthdayDate"
-              required
+              name="birthdayDate"
               value={birthdayDate}
               onChange={(e) => setBirthdayDate(e.target.value)}
+              required
             />
           </div>
           <div className="grid w-full items-center gap-1">
-            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
-              Horário de notificação
-            </label>
+            <label htmlFor="notificationTime">Horário de Notificação</label>
             <Input
               type="time"
-              name="notificationTime"
               id="notificationTime"
+              name="notificationTime"
               value={notificationTime}
-              required
               onChange={(e) => setNotificationTime(e.target.value)}
+              required
             />
           </div>
-          <Button
-            disabled={isLoading}
-            className="font-bold text-base mt-6 p-3 bg-green-300 hover:bg-green-200 transition-all ease-linear"
-            type="submit"
-          >
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? (
-              <Icon
-                size="0.75rem"
-                className="animate-spin"
-                name="progress_activity"
-              />
+              <CircleNotch size={24} className="animate-spin" />
             ) : (
-              "Salvar"
+              "Adicionar"
             )}
           </Button>
         </form>

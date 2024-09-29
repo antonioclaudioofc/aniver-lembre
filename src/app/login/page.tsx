@@ -1,6 +1,5 @@
 "use client";
 
-import { Icon } from "@/components/Icon";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { Header } from "@/components/Header";
@@ -8,8 +7,14 @@ import Link from "next/link";
 import { REGISTER } from "../constants/routes";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { AuthController } from "@/controllers/auth.controller";
+import { Toast } from "@/components/Toast";
+import {
+  CalendarDots,
+  CircleNotch,
+  Eye,
+  EyeSlash,
+} from "@phosphor-icons/react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,6 +22,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [alertType, setAlertType] = useState<"check" | "error">("error");
 
   const router = useRouter();
 
@@ -36,80 +45,84 @@ export default function Login() {
     if (isOk === true) {
       router.push("/");
     } else if (typeof isOk === "string") {
-      toast(isOk);
+      setToastMessage(isOk);
+      setAlertType("error");
+      setShowToast(true);
     } else {
-      toast("Erro ao registrar, Tente novamente!");
+      setToastMessage("Erro ao registrar, Tente novamente!");
+      setAlertType("error");
+      setShowToast(true);
     }
   }
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <Icon className="text-pink-500" size="4rem" name="today" fill="1" />
+      <CalendarDots
+        weight="fill"
+        className="text-pink-300 h-16 w-16"
+        size={24}
+      />
       <Header
         title="Bem vindo(a) de Volta"
         subtitle="Preencha as informações abaixo"
       />
       <form className="mt-10" onSubmit={onSubmit}>
-        <fieldset className="grid gap-4 w-full max-w-72">
-          <div className="grid w-full items-center gap-1">
-            <label className="text-gray-300 font-bold text-sm" htmlFor="email">
+        <fieldset className="grid gap-6 grid-cols-1 w-80 max-w-80">
+          <div>
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900 "
+            >
               Email
             </label>
             <Input
               type="email"
               name="email"
               id="email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Insira seu e-mail"
             />
           </div>
-          <div className="grid w-full items-center gap-1">
+          <div>
             <label
-              className="text-gray-300 font-bold text-sm"
+              className="block mb-2 text-sm font-medium text-gray-900"
               htmlFor="password"
             >
               Senha
             </label>
-            <Input
-              type={showPassword ? "text" : "password"}
-              icon={
-                showPassword ? (
-                  <Icon
-                    className="text-gray-200 cursor-pointer hover:text-gray-300"
-                    name="visibility_off"
-                    size="1.25rem"
-                    onClick={handleTogglePassword}
-                  />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Insira sua senha"
+              />
+              <div className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-500 cursor-pointer transition-all ease-linear">
+                {showPassword ? (
+                  <Eye onClick={handleTogglePassword} size={24} weight="fill" />
                 ) : (
-                  <Icon
-                    className="text-gray-200 cursor-pointer hover:text-gray-300"
-                    name="visibility"
-                    size="1.25rem"
+                  <EyeSlash
                     onClick={handleTogglePassword}
+                    size={24}
+                    weight="fill"
                   />
-                )
-              }
-              id="password"
-              name="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Insira sua senha"
-            />
+                )}
+              </div>
+            </div>
           </div>
         </fieldset>
-        <span className="text-pink-700 text-sm cursor-pointer block mt-2 mb-5 text-right hover:text-pink-600">
+        <span className="text-pink-300 text-sm cursor-pointer block mt-2 mb-5 text-right hover:text-pink-400">
           Esqueceu a senha?
         </span>
-        <Button disabled={isLoading} className="font-bold" type="submit">
+        <Button disabled={isLoading} type="submit">
           {isLoading ? (
-            <Icon
-              size="0.75rem"
-              className="animate-spin"
-              name="progress_activity"
-            />
+            <div className="flex justify-center items-center">
+              <CircleNotch size={24} className="text-pink-200 animate-spin" />
+            </div>
           ) : (
             "Entrar"
           )}
@@ -121,12 +134,17 @@ export default function Login() {
           Não possui uma conta?{" "}
           <Link
             href={REGISTER}
-            className="text-pink-700 cursor-pointer hover:text-pink-600"
+            className="text-pink-300 cursor-pointer hover:text-pink-400"
           >
             Cadastre-se agora.
           </Link>
         </p>
       </form>
+      {showToast && (
+        <Toast typeAlert={alertType} onClose={() => setShowToast(false)}>
+          {toastMessage}
+        </Toast>
+      )}
     </div>
   );
 }
