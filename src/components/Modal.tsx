@@ -8,16 +8,14 @@ import { Birthday } from "@/models/birthday.model";
 interface ModalProps {
   isOpenModal: boolean;
   onCloseModal: () => void;
-  onSubmitModal: (item: Birthday) => void;
   userId: string | undefined;
   showToastMessage: (message: string, type: "check" | "error") => void;
-  birthdayData?: Birthday;
+  birthdayData?: Birthday | null;
 }
 
 export function Modal({
   isOpenModal,
   onCloseModal,
-  onSubmitModal,
   userId,
   showToastMessage,
   birthdayData,
@@ -64,10 +62,8 @@ export function Modal({
       return;
     }
 
-    const controller = await BirthdaysController.getInstance();
-
     try {
-      console.log("Submitting Birthday Data:", birthday);
+      const controller = await BirthdaysController.getInstance();
       if (birthday.id) {
         await controller.updateBirthday(
           birthday.id,
@@ -76,7 +72,7 @@ export function Modal({
           birthday.notificationTime,
           userId!
         );
-        showToastMessage("Atualizado com sucesso", "check");
+        showToastMessage("Aniversário atualizado com sucesso", "check");
       } else {
         await controller.registerBirthday(
           birthday.name,
@@ -84,10 +80,10 @@ export function Modal({
           birthday.notificationTime,
           userId!
         );
-        showToastMessage("Adicionado com sucesso", "check");
+        showToastMessage("Aniversário adicionado com sucesso", "check");
       }
     } catch (error) {
-      console.error("Erro ao atualizar o aniversário:", error);
+      console.error("Erro ao salvar o aniversário:", error);
       showToastMessage("Erro ao salvar! Tente novamente", "error");
     } finally {
       setIsLoading(false);

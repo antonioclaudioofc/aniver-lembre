@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Icon } from "@/components/Icon";
-import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { Header } from "@/components/Header";
 import partying from "@/assets/partying.svg";
@@ -10,9 +8,16 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { LOGIN } from "../constants/routes";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import clsx from "clsx";
 import { AuthController } from "@/controllers/auth.controller";
+import { Toast } from "@/components/Toast";
+import { Input } from "@/components/Input";
+import {
+  CalendarDots,
+  CircleNotch,
+  Eye,
+  EyeSlash,
+} from "@phosphor-icons/react";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,11 +28,25 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [alertType, setAlertType] = useState<"check" | "error">("error");
+
   const router = useRouter();
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
+
+  function showToastMessage(message: string, type: "check" | "error") {
+    setToastMessage(message);
+    setAlertType(type);
+    setShowToast(true);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +54,7 @@ export default function Register() {
     setError(null);
 
     if (password !== confirmPassword) {
-      toast("As senhas não coincidem");
+      showToastMessage("As senhas não coincidem", "error");
       setIsLoading(false);
       return;
     }
@@ -50,9 +69,9 @@ export default function Register() {
     if (isOk === true) {
       router.push("/");
     } else if (typeof isOk === "string") {
-      toast(isOk);
+      showToastMessage(isOk, "error");
     } else {
-      toast("Erro ao registrar! Tente novamente.");
+      showToastMessage("Erro ao registrar! Tente novamente.", "error");
     }
   }
 
@@ -75,15 +94,22 @@ export default function Register() {
         />
       </div>
       <div className="flex flex-col justify-center items-center">
-        <Icon className="text-pink-500" size="4rem" name="today" fill="1" />
+        <CalendarDots
+          weight="fill"
+          className="text-pink-300 h-16 w-16"
+          size={24}
+        />
         <Header
           title="Cadastre-se agora"
           subtitle="Preencha as informações abaixo"
         />
         <form className="mt-10" onSubmit={onSubmit}>
-          <fieldset className="grid gap-4 w-72">
-            <div className="grid w-full items-center gap-1">
-              <label className="text-gray-300 font-bold text-sm" htmlFor="name">
+          <fieldset className="grid gap-6 grid-cols-1 w-80 max-w-80 mb-6">
+            <div>
+              <label
+                htmlFor="name"
+                className="block mb-2 text-sm font-medium text-gray-900 "
+              >
                 Nome
               </label>
               <Input
@@ -91,15 +117,14 @@ export default function Register() {
                 name="name"
                 id="name"
                 value={name}
-                required
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Insira seu nome"
               />
             </div>
-            <div className="grid w-full items-center gap-1">
+            <div>
               <label
-                className="text-gray-300 font-bold text-sm"
                 htmlFor="email"
+                className="block mb-2 text-sm font-medium text-gray-900 "
               >
                 Email
               </label>
@@ -112,85 +137,84 @@ export default function Register() {
                 placeholder="Insira seu e-mail"
               />
             </div>
-            <div className="grid w-full items-center gap-1">
+            <div>
               <label
-                className="text-gray-300 font-bold text-sm"
+                className="block mb-2 text-sm font-medium text-gray-900"
                 htmlFor="password"
               >
                 Senha
               </label>
-              <Input
-                type={showPassword ? "text" : "password"}
-                icon={
-                  showPassword ? (
-                    <Icon
-                      className="text-gray-200 cursor-pointer hover:text-gray-300"
-                      name="visibility_off"
-                      size="1.25rem"
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Insira sua senha"
+                />
+                <div className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-500 cursor-pointer transition-all ease-linear">
+                  {showPassword ? (
+                    <Eye
                       onClick={handleTogglePassword}
+                      size={24}
+                      weight="fill"
                     />
                   ) : (
-                    <Icon
-                      className="text-gray-200 cursor-pointer hover:text-gray-300"
-                      name="visibility"
-                      size="1.25rem"
+                    <EyeSlash
                       onClick={handleTogglePassword}
+                      size={24}
+                      weight="fill"
                     />
-                  )
-                }
-                id="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Insira sua senha"
-              />
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="grid w-full items-center gap-1">
+            <div>
               <label
-                className="text-gray-300 font-bold text-sm"
-                htmlFor="password"
+                className="block mb-2 text-sm font-medium text-gray-900"
+                htmlFor="confirmPassword"
               >
-                Confirmação de senha
+                Confirmação de Senha
               </label>
-              <Input
-                type={showPassword ? "text" : "password"}
-                icon={
-                  showPassword ? (
-                    <Icon
-                      className="text-gray-200 cursor-pointer hover:text-gray-300"
-                      name="visibility_off"
-                      size="1.25rem"
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Insira sua senha"
+                />
+                <div className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-500 cursor-pointer transition-all ease-linear">
+                  {showPassword ? (
+                    <Eye
                       onClick={handleTogglePassword}
+                      size={24}
+                      weight="fill"
                     />
                   ) : (
-                    <Icon
-                      className="text-gray-200 cursor-pointer hover:text-gray-300"
-                      name="visibility"
-                      size="1.25rem"
+                    <EyeSlash
                       onClick={handleTogglePassword}
+                      size={24}
+                      weight="fill"
                     />
-                  )
-                }
-                id="confirmPassword"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Insira sua senha novamente"
-              />
+                  )}
+                </div>
+              </div>
             </div>
           </fieldset>
-          <Button disabled={isLoading} className="font-bold mt-6" type="submit">
+          <Button disabled={isLoading} type="submit">
             {isLoading ? (
-              <Icon
-                size="0.75rem"
-                className="animate-spin"
-                name="progress_activity"
-              />
+              <div className="flex justify-center items-center">
+                <CircleNotch size={24} className="text-pink-200 animate-spin" />
+              </div>
             ) : (
               "Cadastrar"
             )}
           </Button>
-          {error && <div style={{ color: "red" }}>{error}</div>}
           <p className="text-gray-400 mt-4 text-sm text-center">
             Já possui conta?{" "}
             <Link
@@ -202,6 +226,11 @@ export default function Register() {
           </p>
         </form>
       </div>
+      {showToast && (
+        <Toast typeAlert={alertType} onClose={() => setShowToast(false)}>
+          {toastMessage}
+        </Toast>
+      )}
     </main>
   );
 }

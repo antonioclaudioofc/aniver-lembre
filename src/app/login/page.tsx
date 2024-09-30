@@ -33,6 +33,16 @@ export default function Login() {
     setShowPassword(!showPassword);
   };
 
+  function showToastMessage(message: string, type: "check" | "error") {
+    setToastMessage(message);
+    setAlertType(type);
+    setShowToast(true);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
@@ -45,13 +55,9 @@ export default function Login() {
     if (isOk === true) {
       router.push("/");
     } else if (typeof isOk === "string") {
-      setToastMessage(isOk);
-      setAlertType("error");
-      setShowToast(true);
+      showToastMessage(isOk, "error");
     } else {
-      setToastMessage("Erro ao registrar, Tente novamente!");
-      setAlertType("error");
-      setShowToast(true);
+      showToastMessage("Erro ao registrar! Tente novamente.", "error");
     }
   }
 

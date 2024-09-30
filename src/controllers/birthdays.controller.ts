@@ -3,10 +3,13 @@ import {
   addDoc,
   collection,
   doc,
+  getDocs,
   onSnapshot,
   query,
   updateDoc,
+  where,
 } from "firebase/firestore";
+import { nanoid } from "nanoid";
 
 export class BirthdaysController {
   static instance: BirthdaysController | null = null;
@@ -32,7 +35,10 @@ export class BirthdaysController {
         `users/${userId}/birthdays`
       );
 
+      const id = nanoid();
+
       await addDoc(birthdaysCollectionRef, {
+        id,
         name,
         birthdayDate,
         notificationTime,
@@ -47,25 +53,32 @@ export class BirthdaysController {
   }
 
   async updateBirthday(
-    id: string,
+    id: string, 
     name: string,
     birthdayDate: string,
     notificationTime: string,
     userId: string
   ) {
     try {
-      const birthdayDocRef = doc(
-        firestore,
-        `users/${userId}/birthdays/${id}`
-      );
+      const birthdaysRef = collection(firestore, `users/${userId}/birthdays`);
 
-      await updateDoc(birthdayDocRef, {
-        name,
-        birthdayDate,
-        notificationTime,
-      });
+      const q = query(birthdaysRef, where("id", "==", id));
+      const querySnapshot = await getDocs(q);
 
-      return true;
+      if (!querySnapshot.empty) {
+        const docRef = querySnapshot.docs[0].ref;
+
+        await updateDoc(docRef, {
+          name,
+          birthdayDate,
+          notificationTime,
+        });
+
+        return true;
+      } else {
+        console.error("No birthday found with the given id:", id);
+        return false;
+      }
     } catch (error) {
       console.error("Error updating birthday: ", error);
       return false;
