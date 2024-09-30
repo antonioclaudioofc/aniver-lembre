@@ -2,7 +2,7 @@ import { firestore } from "@/services/firestore.service";
 import {
   addDoc,
   collection,
-  doc,
+  deleteDoc,
   getDocs,
   onSnapshot,
   query,
@@ -47,13 +47,13 @@ export class BirthdaysController {
 
       return true;
     } catch (error) {
-      console.error("Error adding birthday: ", error);
+      console.error("Erro ao adicionar aniversariante", error);
       return false;
     }
   }
 
   async updateBirthday(
-    id: string, 
+    id: string,
     name: string,
     birthdayDate: string,
     notificationTime: string,
@@ -76,11 +76,34 @@ export class BirthdaysController {
 
         return true;
       } else {
-        console.error("No birthday found with the given id:", id);
+        console.error("Aniversariante não encontrado!", id);
         return false;
       }
     } catch (error) {
-      console.error("Error updating birthday: ", error);
+      console.error("Erro ao tentar atualizar aniversariante", error);
+      return false;
+    }
+  }
+
+  async deleteBirthday(id: string, userId: string) {
+    try {
+      const birthdaysRef = collection(firestore, `users/${userId}/birthdays`);
+
+      const q = query(birthdaysRef, where("id", "==", id));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const docRef = querySnapshot.docs[0].ref;
+
+        await deleteDoc(docRef);
+
+        return true;
+      } else {
+        console.error("Aniversariante não encontrado!", id);
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao tentar deletar aniversariante", error);
       return false;
     }
   }
