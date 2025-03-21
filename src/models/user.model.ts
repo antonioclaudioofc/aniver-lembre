@@ -14,3 +14,5 @@ export const userSchema = z
     message: "As senhas devem ser iguais",
     path: ["confirmPassword"],
   });
+
+export type User = z.infer<typeof userSchema>;

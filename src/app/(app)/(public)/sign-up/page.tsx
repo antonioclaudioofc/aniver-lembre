@@ -14,6 +14,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/Form";
+import Link from "next/link";
+import { SIGNIN } from "../../constants/routes";
+import { createUser } from "../../actions/user";
 
 type UserSchema = z.infer<typeof userSchema>;
 
@@ -29,7 +32,7 @@ export default function SignUp() {
   });
 
   const onSubmitSignUp = async (values: UserSchema) => {
-    console.log("ok");
+    createUser(values);
   };
 
   return (
@@ -111,6 +114,12 @@ export default function SignUp() {
           <Button className="mt-4">Entrar</Button>
         </form>
       </Form>
+      <Link
+        className="font-medium text-black text-sm transition-opacity hover:opacity-75 mt-12 text-center block"
+        href={SIGNIN}
+      >
+        Já possui conta? <span className="text-indigo-500">Entrar</span>
+      </Link>
     </div>
   );
 }
