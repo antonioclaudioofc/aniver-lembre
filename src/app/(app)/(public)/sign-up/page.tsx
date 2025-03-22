@@ -17,10 +17,16 @@ import {
 import Link from "next/link";
 import { SIGNIN } from "../../constants/routes";
 import { createUser } from "../../actions/user";
+import { startTransition, useState } from "react";
+import { CircleNotch } from "@phosphor-icons/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type UserSchema = z.infer<typeof userSchema>;
 
 export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const formUser = useForm<UserSchema>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -31,8 +37,21 @@ export default function SignUp() {
     },
   });
 
-  const onSubmitSignUp = async (values: UserSchema) => {
-    createUser(values);
+  const onSubmitSignUp = (values: UserSchema) => {
+    setIsLoading(true);
+    startTransition(async () => {
+      const isOk = await createUser(values);
+
+      setIsLoading(false);
+      if (isOk === true) {
+        toast.success("Conta criada com sucesso! Redirecionando...");
+        router.push(SIGNIN);
+      } else if (typeof isOk === "string") {
+        toast.error(isOk);
+      } else {
+        toast.error("Erro ao registrar, Tente novamente!");
+      }
+    });
   };
 
   return (
@@ -111,7 +130,18 @@ export default function SignUp() {
               </FormItem>
             )}
           />
-          <Button className="mt-4">Entrar</Button>
+          <Button disabled={isLoading} className="mt-4 h-16">
+            {isLoading ? (
+              <div className="flex justify-center items-center">
+                <CircleNotch
+                  weight="bold"
+                  className="text-white w-6 h-6 animate-spin"
+                />
+              </div>
+            ) : (
+              "Entrar"
+            )}
+          </Button>
         </form>
       </Form>
       <Link

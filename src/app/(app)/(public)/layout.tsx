@@ -1,6 +1,6 @@
 import Image from "next/image";
 import moments from "@/assets/moments.svg";
-import { Toaster } from "@/components/Toaster";
+import { Toaster } from "sonner";
 
 export default function PublicLayout({
   children,

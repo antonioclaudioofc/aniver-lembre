@@ -16,18 +16,26 @@ export async function createUser(values: User) {
 
     const { confirmPassword, ...userData } = parsed.data;
 
-    console.log(userData);
+    const response = await fetch(
+      "https://aniver-lembre-api-production.up.railway.app/user",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      }
+    );
 
-    const response = await fetch("http://localhost:4444/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+    if (!response.ok) {
+      return false;
+    }
 
-    console.log(response);
+    return true;
   } catch (error) {
-    console.error(error);
+    if (error instanceof Error) {
+      return `${error.message}`;
+    }
+    return false;
   }
 }
