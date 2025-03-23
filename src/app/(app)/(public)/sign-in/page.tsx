@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import logo from "@/assets/logo.svg";
-import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { z } from "zod";
@@ -18,11 +17,19 @@ import {
   FormMessage,
 } from "@/components/Form";
 import Link from "next/link";
-import { SIGNUP } from "../../constants/routes";
+import { HOME, SIGNUP } from "../../constants/routes";
+import { useRouter } from "next/navigation";
+import { startTransition, useState } from "react";
+import { signIn } from "../../actions/user";
+import { toast } from "sonner";
+import { CircleNotch } from "@phosphor-icons/react";
 
 type AuthSchema = z.infer<typeof authSchema>;
 
 export default function SignIn() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const formAuth = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -32,7 +39,19 @@ export default function SignIn() {
   });
 
   const onSubmitSignIn = async (values: AuthSchema) => {
-    console.log("SignIn");
+    setIsLoading(true);
+    startTransition(async () => {
+      const isOk = await signIn(values);
+
+      setIsLoading(false);
+      if (isOk === true) {
+        router.push(HOME);
+      } else if (typeof isOk === "string") {
+        toast.error(isOk);
+      } else {
+        toast.error("Erro ao registrar, Tente novamente!");
+      }
+    });
   };
 
   return (
@@ -91,7 +110,18 @@ export default function SignIn() {
           <span className="text-right text-sm text-indigo-400 font-medium cursor-pointer transition-colors hover:text-indigo-500">
             Esqueceu a senha?
           </span>
-          <Button className="mt-4">Entrar</Button>
+          <Button disabled={isLoading} className="mt-4">
+            {isLoading ? (
+              <div className="flex justify-center items-center">
+                <CircleNotch
+                  weight="bold"
+                  className="text-white w-6 h-6 animate-spin"
+                />
+              </div>
+            ) : (
+              "Entrar"
+            )}
+          </Button>
         </form>
       </Form>
       <Link

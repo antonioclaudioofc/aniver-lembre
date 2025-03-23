@@ -44,7 +44,7 @@ export default function SignUp() {
 
       setIsLoading(false);
       if (isOk === true) {
-        toast.success("Conta criada com sucesso! Redirecionando...");
+        toast.success("Conta criada com sucesso!");
         router.push(SIGNIN);
       } else if (typeof isOk === "string") {
         toast.error(isOk);
