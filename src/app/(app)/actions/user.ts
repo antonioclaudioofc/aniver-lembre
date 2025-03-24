@@ -2,6 +2,7 @@
 
 import { Auth, authSchema } from "@/models/auth.model";
 import { User, userSchema } from "@/models/user.model";
+import { cookies, headers } from "next/headers";
 
 export async function createUser(values: User): Promise<boolean | string> {
   try {
@@ -70,7 +71,17 @@ export async function signIn(values: Auth) {
       return "Erro ao realizar o login!";
     }
 
-    const data = await response.json();
+    const { token, expiresIn } = await response.json();
+
+    const cookieStore = await cookies();
+
+    cookieStore.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      maxAge: expiresIn,
+      path: "/",
+    });
 
     return true;
   } catch (error) {
