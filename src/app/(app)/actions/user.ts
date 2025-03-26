@@ -2,7 +2,10 @@
 
 import { Auth, authSchema } from "@/models/auth.model";
 import { User, userSchema } from "@/models/user.model";
+import { jwtDecode } from "jwt-decode";
 import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { SIGNIN } from "../constants/routes";
 
 export async function createUser(values: User): Promise<boolean | string> {
   try {
@@ -89,5 +92,41 @@ export async function signIn(values: Auth) {
       return `${error.message}`;
     }
     return false;
+  }
+}
+
+export async function signOut() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("token");
+  redirect(SIGNIN);
+}
+
+export async function decoderTokenSession() {
+  const token = (await cookies()).get("token")?.value;
+
+  if (!token) return null;
+
+  try {
+    const response = await fetch(
+      "https://aniver-lembre-api-production.up.railway.app/user",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar usuário!");
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      return `${error.message}`;
+    }
   }
 }
