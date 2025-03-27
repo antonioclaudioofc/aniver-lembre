@@ -23,11 +23,40 @@ import {
 import clsx from "clsx";
 import { startTransition, useState } from "react";
 import { signOut } from "../../actions/user";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogHeader,
+} from "@/components/Dialog";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { contactSchema, RelationshipEnum } from "@/models/contact.model";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/Form";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/Select";
+import { createContact } from "../../actions/contact";
+import { toast } from "sonner";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
 
   const toggleDropdown = () => {
     setIsOpenDropdown(!isOpenDropdown);
@@ -118,7 +147,13 @@ export default function Home() {
               </div>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-              <Button className="flex gap-3" variant="secondary">
+              <Button
+                className="flex gap-3"
+                variant="secondary"
+                onClick={() => {
+                  setIsOpenDialog(true);
+                }}
+              >
                 Adicionar
               </Button>
             </div>
@@ -256,6 +291,131 @@ export default function Home() {
           </Card>
         </div>
       </div>
+      <DialogContact open={isOpenDialog} onOpenChange={setIsOpenDialog} />
     </section>
+  );
+}
+
+interface DialogContactProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+type ContactSchema = z.infer<typeof contactSchema>;
+
+function DialogContact(props: DialogContactProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const formContact = useForm<ContactSchema>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      birthdate: "",
+      relationship: "Amigo(a)",
+    },
+  });
+
+  const onSubmitContact = (values: ContactSchema) => {
+    setIsLoading(true);
+    startTransition(async () => {
+      const isOk = await createContact(values);
+
+      if (isOk === true) {
+        toast.success("Aniversariante criada com sucesso!");
+      } else if (typeof isOk === "string") {
+        toast.error(isOk);
+      } else {
+        toast.error("Erro ao registrar, Tente novamente!");
+      }
+      setIsLoading(false);
+    });
+  };
+
+  return (
+    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Adicionar Aniversariante</DialogTitle>
+          <DialogDescription>Preencha as informações abaixo</DialogDescription>
+        </DialogHeader>
+        <Form {...formContact}>
+          <form
+            method="post"
+            onSubmit={formContact.handleSubmit(onSubmitContact)}
+            className="grid grid-cols-1 gap-2 mt-8"
+          >
+            <FormField
+              control={formContact.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Insira seu nome" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={formContact.control}
+              name="birthdate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Data de nascimento</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Selecione a data"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={formContact.control}
+              name="relationship"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Relacionamento</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione tipo de relação" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(RelationshipEnum.Values).map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button disabled={isLoading} className="mt-4 h-16">
+              {isLoading ? (
+                <div className="flex justify-center items-center">
+                  <CircleNotch
+                    weight="bold"
+                    className="text-white w-6 h-6 animate-spin"
+                  />
+                </div>
+              ) : (
+                "Adicionar"
+              )}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
