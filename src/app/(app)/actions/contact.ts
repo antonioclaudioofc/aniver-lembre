@@ -48,3 +48,31 @@ export async function createContact(
     return false;
   }
 }
+
+export async function findAllContact(): Promise<Contact[] | string> {
+  const token = (await cookies()).get("token")?.value;
+
+  if (!token) return "Usuário não autenticado";
+
+  try {
+    const response = await fetch("http://localhost:4444/contact", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      return "Erro ao acessar";
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Error) {
+      return `${error.message}`;
+    }
+    return "Error";
+  }
+}

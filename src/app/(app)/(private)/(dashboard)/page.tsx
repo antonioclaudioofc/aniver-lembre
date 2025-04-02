@@ -51,12 +51,14 @@ import {
 } from "@/components/Select";
 import { createContact } from "../../actions/contact";
 import { toast } from "sonner";
+import { useContact } from "@/hooks/useContact";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const { contacts } = useContact();
 
   const toggleDropdown = () => {
     setIsOpenDropdown(!isOpenDropdown);
@@ -161,6 +163,14 @@ export default function Home() {
         </div>
         <hr className="text-gray-200 mb-4" />
         <div className="flex justify-between flex-wrap items-center">
+          <ul>
+            {contacts.map((contact) => (
+              <div key={contact.id}>
+                <li>Nome: {contact.name}</li>
+                <li>Relacionamento: {contact.relationship}</li>
+              </div>
+            ))}
+          </ul>
           <Card className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors">
             <CardHeader>
               <CardTitle className="text-3xl">Maria Rebeca</CardTitle>
