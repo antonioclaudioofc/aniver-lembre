@@ -3,12 +3,13 @@ import io from "socket.io-client";
 import { findAllContact } from "@/app/(app)/actions/contact";
 import { Contact } from "@/models/contact.model";
 
-const API_URL = "http://localhost:4444";
+const API_URL = "https://aniver-lembre-api-production.up.railway.app";
+
 const socket = io(API_URL, { transports: ["websocket"] });
 
 export function useContact() {
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoadingContact, setIsLoadingContact] = useState(true);
 
   useEffect(() => {
     async function loadContacts() {
@@ -16,13 +17,12 @@ export function useContact() {
       if (Array.isArray(initialContacts)) {
         setContacts(initialContacts);
       }
-      setLoading(false);
+      setIsLoadingContact(false);
     }
 
     loadContacts();
 
     socket.on("contatosAtualizados", (updatedContacts: Contact[]) => {
-      console.log("🚀 Contatos atualizados via WebSocket:", updatedContacts);
       setContacts(updatedContacts);
     });
 
@@ -31,5 +31,5 @@ export function useContact() {
     };
   }, []);
 
-  return { contacts, loading };
+  return { contacts, isLoadingContact };
 }

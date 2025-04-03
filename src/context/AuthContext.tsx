@@ -19,7 +19,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
+  isLoadingUser: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         console.error("Erro ao recuperar o usuário:", error);
         setUser(null);
       } finally {
-        setLoading(false);
+        setIsLoadingUser(false);
       }
     };
 
@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, isLoadingUser }}>
       {children}
     </AuthContext.Provider>
   );

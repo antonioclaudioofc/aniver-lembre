@@ -54,11 +54,11 @@ import { toast } from "sonner";
 import { useContact } from "@/hooks/useContact";
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, isLoadingUser } = useAuth();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const { contacts } = useContact();
+  const { contacts, isLoadingContact } = useContact();
 
   const toggleDropdown = () => {
     setIsOpenDropdown(!isOpenDropdown);
@@ -96,7 +96,7 @@ export default function Home() {
               >
                 <div className="w-9 h-9 rounded-full bg-gray-200"></div>
                 <h4 className={clsx("font-medium text-base", "max-md:hidden")}>
-                  {loading ? "Carregando..." : user?.name}
+                  {isLoadingUser ? "Carregando..." : user?.name}
                 </h4>
                 <CaretDown className="w-4 h-4" />
               </div>
@@ -162,143 +162,51 @@ export default function Home() {
           </div>
         </div>
         <hr className="text-gray-200 mb-4" />
-        <div className="flex justify-between flex-wrap items-center">
-          <ul>
-            {contacts.map((contact) => (
-              <div key={contact.id}>
-                <li>Nome: {contact.name}</li>
-                <li>Relacionamento: {contact.relationship}</li>
-              </div>
-            ))}
-          </ul>
-          <Card className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <CardTitle className="text-3xl">Maria Rebeca</CardTitle>
-              <CardDescription className="flex gap-2">
-                <Cake className="w-4 h-4 text-pink-300" weight="fill" />{" "}
-                <span>00/00/0000</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-xl mb-2">
-                Completará <span className="font-bold">00</span> anos
-              </h3>
-              <p>
-                Relacionamento: <span className="font-bold">Parente</span>
-              </p>
-              <div className="h-24 overflow-hidden">
-                Messagem: Lorem ipsum dolor sit amet consectetur adipisicing
-                elit. Harum sit explicabo atque ad quas voluptatem ipsum eum
-                sequi pariatur tenetur officiis quaerat facere, molestiae
-                corrupti!
-              </div>
-            </CardContent>
-            <CardFooter>
-              <p className="flex gap-2 items-center">
-                <BellRinging
-                  className="w-4 h-4 text-indigo-500"
-                  weight="fill"
-                />{" "}
-                <span>00/00/0000</span>
-              </p>
-            </CardFooter>
-          </Card>
-          <Card className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <CardTitle className="text-3xl">Maria Rebeca</CardTitle>
-              <CardDescription className="flex gap-2">
-                <Cake className="w-4 h-4 text-pink-300" weight="fill" />{" "}
-                <span>00/00/0000</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-xl mb-2">
-                Completará <span className="font-bold">00</span> anos
-              </h3>
-              <p>
-                Relacionamento: <span className="font-bold">Parente</span>
-              </p>
-              <div className="h-24 overflow-hidden">
-                Messagem: Lorem ipsum dolor sit amet consectetur adipisicing
-                elit. Harum sit explicabo atque ad quas voluptatem ipsum eum
-                sequi pariatur tenetur officiis quaerat facere, molestiae
-                corrupti!
-              </div>
-            </CardContent>
-            <CardFooter>
-              <p className="flex gap-2 items-center">
-                <BellRinging
-                  className="w-4 h-4 text-indigo-500"
-                  weight="fill"
-                />{" "}
-                <span>00/00/0000</span>
-              </p>
-            </CardFooter>
-          </Card>
-          <Card className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <CardTitle className="text-3xl">Maria Rebeca</CardTitle>
-              <CardDescription className="flex gap-2">
-                <Cake className="w-4 h-4 text-pink-300" weight="fill" />{" "}
-                <span>00/00/0000</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-xl mb-2">
-                Completará <span className="font-bold">00</span> anos
-              </h3>
-              <p>
-                Relacionamento: <span className="font-bold">Parente</span>
-              </p>
-              <div className="h-24 overflow-hidden">
-                Messagem: Lorem ipsum dolor sit amet consectetur adipisicing
-                elit. Harum sit explicabo atque ad quas voluptatem ipsum eum
-                sequi pariatur tenetur officiis quaerat facere, molestiae
-                corrupti!
-              </div>
-            </CardContent>
-            <CardFooter>
-              <p className="flex gap-2 items-center">
-                <BellRinging
-                  className="w-4 h-4 text-indigo-500"
-                  weight="fill"
-                />{" "}
-                <span>00/00/0000</span>
-              </p>
-            </CardFooter>
-          </Card>
-          <Card className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors">
-            <CardHeader>
-              <CardTitle className="text-3xl">Maria Rebeca</CardTitle>
-              <CardDescription className="flex gap-2">
-                <Cake className="w-4 h-4 text-pink-300" weight="fill" />{" "}
-                <span>00/00/0000</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-xl mb-2">
-                Completará <span className="font-bold">00</span> anos
-              </h3>
-              <p>
-                Relacionamento: <span className="font-bold">Parente</span>
-              </p>
-              <div className="h-24 overflow-hidden">
-                Messagem: Lorem ipsum dolor sit amet consectetur adipisicing
-                elit. Harum sit explicabo atque ad quas voluptatem ipsum eum
-                sequi pariatur tenetur officiis quaerat facere, molestiae
-                corrupti!
-              </div>
-            </CardContent>
-            <CardFooter>
-              <p className="flex gap-2 items-center">
-                <BellRinging
-                  className="w-4 h-4 text-indigo-500"
-                  weight="fill"
-                />{" "}
-                <span>00/00/0000</span>
-              </p>
-            </CardFooter>
-          </Card>
+        <div className="flex gap-5 flex-wrap">
+          {isLoadingContact ? (
+            "Carregando..."
+          ) : contacts.length > 0 ? (
+            contacts.map((contact) => (
+              <Card
+                key={contact.id}
+                className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <CardHeader>
+                  <CardTitle className="text-3xl">{contact.name}</CardTitle>
+                  <CardDescription className="flex gap-2">
+                    <Cake className="w-4 h-4 text-pink-300" weight="fill" />{" "}
+                    <span>00/00/0000</span>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <h3 className="text-xl mb-2">
+                    Completará <span className="font-bold">00</span> anos
+                  </h3>
+                  <p>
+                    Relacionamento:{" "}
+                    <span className="font-bold">{contact.relationship}</span>
+                  </p>
+                  <div className="h-24 overflow-hidden">
+                    Messagem: Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. Harum sit explicabo atque ad quas voluptatem ipsum eum
+                    sequi pariatur tenetur officiis quaerat facere, molestiae
+                    corrupti!
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <p className="flex gap-2 items-center">
+                    <BellRinging
+                      className="w-4 h-4 text-indigo-500"
+                      weight="fill"
+                    />{" "}
+                    <span>00/00/0000</span>
+                  </p>
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            <p>Nenhum contato cadastrado.</p>
+          )}
         </div>
       </div>
       <DialogContact open={isOpenDialog} onOpenChange={setIsOpenDialog} />
@@ -331,7 +239,9 @@ function DialogContact(props: DialogContactProps) {
       const isOk = await createContact(values);
 
       if (isOk === true) {
+        formContact.reset();
         toast.success("Aniversariante criada com sucesso!");
+        props.onOpenChange(false);
       } else if (typeof isOk === "string") {
         toast.error(isOk);
       } else {

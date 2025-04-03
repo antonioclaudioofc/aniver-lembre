@@ -55,7 +55,7 @@ export async function findAllContact(): Promise<Contact[] | string> {
   if (!token) return "Usuário não autenticado";
 
   try {
-    const response = await fetch("http://localhost:4444/contact", {
+    const response = await fetch("https://aniver-lembre-api-production.up.railway.app/contact", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
