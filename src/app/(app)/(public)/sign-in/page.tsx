@@ -23,6 +23,7 @@ import { startTransition, useState } from "react";
 import { signIn } from "../../actions/user";
 import { toast } from "sonner";
 import { CircleNotch } from "@phosphor-icons/react";
+import clsx from "clsx";
 
 type AuthSchema = z.infer<typeof authSchema>;
 
@@ -55,7 +56,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="max-w-96">
+    <div className={clsx("max-w-96", "max-lg:max-w-72")}>
       <div className="max-w-24 max-h-24 bg-gray-100 shadow p-2 rounded-full mx-auto mb-2">
         <Image
           src={logo}
@@ -63,8 +64,10 @@ export default function SignIn() {
           alt="Logo do site, que é um calendário com cor roxo"
         />
       </div>
-      <h1 className="text-5xl font-bold text-center">AniverLembre</h1>
-      <p className="text-gray-500 text-center">
+      <h1 className={clsx("text-5xl font-bold text-center", "max-md:text-4xl")}>
+        AniverLembre
+      </h1>
+      <p className={clsx("text-gray-500 text-center", "max-md:text-sm")}>
         Preencha as informações abaixo!
       </p>
       <Form {...formAuth}>
@@ -128,8 +131,8 @@ export default function SignIn() {
         className="font-medium text-black text-sm transition-opacity hover:opacity-75 mt-12 text-center block"
         href={SIGNUP}
       >
-        Não possui conta?{" "}
-        <span className="text-indigo-500">Cadastre-se agora!</span>
+        Não possui conta?
+        <span className="text-indigo-500"> Cadastre-se agora!</span>
       </Link>
     </div>
   );

@@ -21,6 +21,7 @@ import { startTransition, useState } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 type UserSchema = z.infer<typeof userSchema>;
 
@@ -55,9 +56,11 @@ export default function SignUp() {
   };
 
   return (
-    <div className="max-w-96">
-      <h2 className="text-4xl font-bold text-center">Crie sua conta</h2>
-      <p className="text-gray-500 text-center">
+    <div className={clsx("max-w-96", "max-lg:max-w-72")}>
+      <h2 className={clsx("text-4xl font-bold text-center", "max-sm:text-3xl")}>
+        Crie sua conta
+      </h2>
+      <p className={clsx("text-gray-500 text-center", "max-sm:text-sm")}>
         Preencha as informações abaixo!
       </p>
       <Form {...formUser}>

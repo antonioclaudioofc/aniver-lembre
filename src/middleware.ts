@@ -1,9 +1,12 @@
 import { jwtDecode } from "jwt-decode";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { HOME, SIGNIN } from "./app/(app)/constants/routes";
+import { HOME, SIGNIN, SIGNUP } from "./app/(app)/constants/routes";
 
-const publicRoutes = [{ path: SIGNIN, whenAuthenticated: "redirect" }] as const;
+const publicRoutes = [
+  { path: SIGNIN, whenAuthenticated: "redirect" },
+  { path: SIGNUP, whenAuthenticated: "" },
+] as const;
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = SIGNIN;
 

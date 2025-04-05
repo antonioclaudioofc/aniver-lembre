@@ -1,6 +1,7 @@
 import Image from "next/image";
 import moments from "@/assets/moments.svg";
 import { Toaster } from "sonner";
+import clsx from "clsx";
 
 export default function PublicLayout({
   children,
@@ -10,8 +11,18 @@ export default function PublicLayout({
   return (
     <div>
       <Toaster richColors position="bottom-center" duration={3000} />
-      <section className="w-full min-h-screen grid grid-cols-2">
-        <div className="bg-indigo-500 flex justify-center items-center flex-col gap-4">
+      <section
+        className={clsx(
+          "w-full min-h-screen grid grid-cols-2",
+          "max-md:grid-cols-1"
+        )}
+      >
+        <div
+          className={clsx(
+            "bg-indigo-500 flex justify-center items-center flex-col gap-4",
+            "max-md:hidden"
+          )}
+        >
           <Image
             src={moments}
             className="max-w-96 w-full max-h-[32rem]"

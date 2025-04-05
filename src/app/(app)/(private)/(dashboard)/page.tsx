@@ -130,7 +130,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto">
+      <div
+        className={clsx("max-w-7xl mx-auto", "max-xl:px-16", "max-md:px-16")}
+      >
         <div className="relative">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 my-4">
             <div className="w-full md:w-1/2">
@@ -162,7 +164,7 @@ export default function Home() {
           </div>
         </div>
         <hr className="text-gray-200 mb-4" />
-        <div className="flex gap-5 flex-wrap">
+        <div className="flex gap-3 flex-wrap">
           {isLoadingContact ? (
             "Carregando..."
           ) : contacts.length > 0 ? (
@@ -172,19 +174,19 @@ export default function Home() {
                 className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors"
               >
                 <CardHeader>
-                  <CardTitle className="text-3xl">{contact.name}</CardTitle>
+                  <CardTitle className="text-2xl">{contact.name}</CardTitle>
                   <CardDescription className="flex gap-2">
-                    <Cake className="w-4 h-4 text-pink-300" weight="fill" />{" "}
+                    <Cake className="w-4 h-4 text-pink-300" weight="fill" />
                     <span>00/00/0000</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <h3 className="text-xl mb-2">
+                  <h3 className="mb-2">
                     Completará <span className="font-bold">00</span> anos
                   </h3>
                   <p>
-                    Relacionamento:{" "}
-                    <span className="font-bold">{contact.relationship}</span>
+                    Relacionamento:
+                    <span className="font-bold"> {contact.relationship}</span>
                   </p>
                   <div className="h-24 overflow-hidden">
                     Messagem: Lorem ipsum dolor sit amet consectetur adipisicing
