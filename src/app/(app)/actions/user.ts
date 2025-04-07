@@ -2,7 +2,6 @@
 
 import { Auth, authSchema } from "@/models/auth.model";
 import { User, userSchema } from "@/models/user.model";
-import { jwtDecode } from "jwt-decode";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { SIGNIN } from "../constants/routes";
@@ -33,7 +32,8 @@ export async function createUser(values: User): Promise<boolean | string> {
     );
 
     if (!response.ok) {
-      return false;
+      const error = await response.json();
+      return error.message || "Erro ao criar usuário";
     }
 
     return true;
@@ -71,7 +71,8 @@ export async function signIn(values: Auth) {
     );
 
     if (!response.ok) {
-      return "Erro ao realizar o login!";
+      const error = await response.json();
+      return error.message || "Erro ao realizar o login";
     }
 
     const { token, expiresIn } = await response.json();

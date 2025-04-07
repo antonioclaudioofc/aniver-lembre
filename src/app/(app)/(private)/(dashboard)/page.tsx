@@ -177,7 +177,7 @@ export default function Home() {
                   <CardTitle className="text-2xl">{contact.name}</CardTitle>
                   <CardDescription className="flex gap-2">
                     <Cake className="w-4 h-4 text-pink-300" weight="fill" />
-                    <span>00/00/0000</span>
+                    <span>{contact.birthdate.toString()}</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
