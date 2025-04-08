@@ -52,6 +52,7 @@ import {
 import { createContact } from "../../actions/contact";
 import { toast } from "sonner";
 import { useContact } from "@/hooks/useContact";
+import { calculateAge, formatDateToBR } from "@/utils/validation";
 
 export default function Home() {
   const { user, isLoadingUser } = useAuth();
@@ -130,11 +131,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div
-        className={clsx("max-w-7xl mx-auto", "max-xl:px-16", "max-md:px-16")}
-      >
+      <div className={clsx("max-w-7xl mx-auto", "max-xl:px-16", "max-md:px-5")}>
         <div className="relative">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 my-4">
+          <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 my-4 ">
             <div className="w-full md:w-1/2">
               <div className="relative">
                 <Input
@@ -164,7 +163,12 @@ export default function Home() {
           </div>
         </div>
         <hr className="text-gray-200 mb-4" />
-        <div className="flex gap-3 flex-wrap">
+        <div
+          className={clsx(
+            "flex gap-3 flex-wrap pb-16",
+            "max-md:justify-center"
+          )}
+        >
           {isLoadingContact ? (
             "Carregando..."
           ) : contacts.length > 0 ? (
@@ -177,12 +181,16 @@ export default function Home() {
                   <CardTitle className="text-2xl">{contact.name}</CardTitle>
                   <CardDescription className="flex gap-2">
                     <Cake className="w-4 h-4 text-pink-300" weight="fill" />
-                    <span>{contact.birthdate.toString()}</span>
+                    <span>{formatDateToBR(contact.birthdate)}</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <h3 className="mb-2">
-                    Completará <span className="font-bold">00</span> anos
+                    Completará{" "}
+                    <span className="font-bold">
+                      {calculateAge(contact.birthdate)}
+                    </span>{" "}
+                    anos
                   </h3>
                   <p>
                     Relacionamento:

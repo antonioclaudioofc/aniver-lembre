@@ -9,3 +9,43 @@ export function isValidBirthData(date: string): boolean {
   }
   return true;
 }
+
+export function formatDateToBR(date: any): string {
+  let d: Date;
+
+  if (typeof date === "string") {
+    d = new Date(date);
+  } else if (date?._seconds) {
+    d = new Date(date._seconds * 1000);
+  } else {
+    return "";
+  }
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+export function calculateAge(date: any): number {
+  let birth: Date;
+
+  if (typeof date === "string") {
+    birth = new Date(date);
+  } else if (date?._seconds) {
+    birth = new Date(date._seconds * 1000);
+  } else {
+    return 0;
+  }
+
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age + 1;
+}
