@@ -1,3 +1,5 @@
+/* eslint-disable   @typescript-eslint/no-explicit-any */
+
 import dayjs from "dayjs";
 
 export function isValidBirthData(date: string): boolean {
@@ -21,11 +23,27 @@ export function formatDateToBR(date: any): string {
     return "";
   }
 
-  const day = String(d.getDate()).padStart(2, "0");
+  const day = String(d.getDate() + 1).padStart(2, "0");
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const year = d.getFullYear();
 
   return `${day}/${month}/${year}`;
+}
+
+export function formatDateToInput(date: any): string {
+  let d: Date;
+
+  if (typeof date === "string") {
+    d = new Date(date);
+  } else if (date instanceof Date) {
+    d = date;
+  } else if (typeof date === "object" && "_seconds" in date) {
+    d = new Date(date._seconds * 1000);
+  } else {
+    return "";
+  }
+
+  return d.toISOString().split("T")[0];
 }
 
 export function calculateAge(date: any): number {

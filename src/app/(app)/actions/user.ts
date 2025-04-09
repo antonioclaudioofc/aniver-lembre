@@ -1,8 +1,10 @@
+/* eslint-disable   @typescript-eslint/no-unused-vars */
+
 "use server";
 
 import { Auth, authSchema } from "@/models/auth.model";
 import { User, userSchema } from "@/models/user.model";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SIGNIN } from "../constants/routes";
 

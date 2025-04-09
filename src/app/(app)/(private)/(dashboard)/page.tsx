@@ -18,10 +18,12 @@ import {
   CaretDown,
   CircleNotch,
   MagnifyingGlass,
+  NotePencil,
+  Trash,
   SignOut,
 } from "@phosphor-icons/react";
 import clsx from "clsx";
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { signOut } from "../../actions/user";
 import {
   Dialog,
@@ -29,10 +31,15 @@ import {
   DialogTitle,
   DialogDescription,
   DialogHeader,
+  DialogFooter,
 } from "@/components/Dialog";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { contactSchema, RelationshipEnum } from "@/models/contact.model";
+import {
+  Contact,
+  contactSchema,
+  RelationshipEnum,
+} from "@/models/contact.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -49,17 +56,27 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/Select";
-import { createContact } from "../../actions/contact";
+import {
+  createContact,
+  updateContact,
+  removeContact,
+} from "../../actions/contact";
 import { toast } from "sonner";
 import { useContact } from "@/hooks/useContact";
-import { calculateAge, formatDateToBR } from "@/utils/validation";
+import {
+  calculateAge,
+  formatDateToBR,
+  formatDateToInput,
+} from "@/utils/validation";
 
 export default function Home() {
   const { user, isLoadingUser } = useAuth();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [isOpenDialogRemove, setIsOpenDialogRemove] = useState(false);
   const { contacts, isLoadingContact } = useContact();
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const toggleDropdown = () => {
     setIsOpenDropdown(!isOpenDropdown);
@@ -77,6 +94,25 @@ export default function Home() {
         setIsLoading(false);
       }
     });
+  };
+
+  const handleAdd = () => {
+    setSelectedContact({
+      name: "",
+      birthdate: "",
+      relationship: "Amigo(a)",
+    });
+    setIsOpenDialog(true);
+  };
+
+  const handleEdit = (contact: Contact) => {
+    setSelectedContact(contact);
+    setIsOpenDialog(true);
+  };
+
+  const handleDelete = (contact: Contact) => {
+    setSelectedContact(contact);
+    setIsOpenDialogRemove(true);
   };
 
   return (
@@ -153,9 +189,7 @@ export default function Home() {
               <Button
                 className="flex gap-3"
                 variant="secondary"
-                onClick={() => {
-                  setIsOpenDialog(true);
-                }}
+                onClick={() => handleAdd()}
               >
                 Adicionar
               </Button>
@@ -175,7 +209,7 @@ export default function Home() {
             contacts.map((contact) => (
               <Card
                 key={contact.id}
-                className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+                className="w-72 h-96 shadow bg-white cursor-pointer hover:bg-gray-50 transition-colors relative"
               >
                 <CardHeader>
                   <CardTitle className="text-2xl">{contact.name}</CardTitle>
@@ -212,14 +246,39 @@ export default function Home() {
                     <span>00/00/0000</span>
                   </p>
                 </CardFooter>
+                <div className="absolute right-4 bottom-6">
+                  <div className="flex flex-row gap-4 items-center">
+                    <Trash
+                      onClick={() => handleDelete(contact)}
+                      weight="fill"
+                      className="w-8 h-8 text-red-500 cursor-pointer transition-all hover:text-red-300"
+                    />
+                    <NotePencil
+                      onClick={() => handleEdit(contact)}
+                      weight="fill"
+                      className="w-8 h-8 text-yellow-500 cursor-pointer transition-all hover:text-yellow-300"
+                    />
+                  </div>
+                </div>
               </Card>
             ))
           ) : (
             <p>Nenhum contato cadastrado.</p>
           )}
         </div>
+        <DialogContact
+          open={isOpenDialog}
+          onOpenChange={setIsOpenDialog}
+          contact={selectedContact}
+        />
+        {selectedContact && (
+          <DialogConfirmRemoveContact
+            open={isOpenDialogRemove}
+            onOpenChange={setIsOpenDialogRemove}
+            contact={selectedContact}
+          />
+        )}
       </div>
-      <DialogContact open={isOpenDialog} onOpenChange={setIsOpenDialog} />
     </section>
   );
 }
@@ -227,6 +286,7 @@ export default function Home() {
 interface DialogContactProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  contact: Contact | null;
 }
 
 type ContactSchema = z.infer<typeof contactSchema>;
@@ -243,14 +303,34 @@ function DialogContact(props: DialogContactProps) {
     },
   });
 
+  useEffect(() => {
+    formContact.reset({
+      name: props.contact?.name ?? "",
+      birthdate: props.contact?.birthdate
+        ? formatDateToInput(props.contact?.birthdate)
+        : "",
+      relationship: props.contact?.relationship ?? "Amigo(a)",
+    });
+  }, [props.open, props.contact]);
+
   const onSubmitContact = (values: ContactSchema) => {
     setIsLoading(true);
     startTransition(async () => {
-      const isOk = await createContact(values);
+      let isOk;
+
+      if (props.contact?.id) {
+        isOk = await updateContact(props.contact.id, values);
+      } else {
+        isOk = await createContact(values);
+      }
 
       if (isOk === true) {
         formContact.reset();
-        toast.success("Aniversariante criada com sucesso!");
+        toast.success(
+          props.contact?.id
+            ? "Aniversariante atualizado com sucesso!"
+            : "Aniversariante criado com sucesso!"
+        );
         props.onOpenChange(false);
       } else if (typeof isOk === "string") {
         toast.error(isOk);
@@ -331,7 +411,15 @@ function DialogContact(props: DialogContactProps) {
                 </FormItem>
               )}
             />
-            <Button disabled={isLoading} className="mt-4 h-16">
+            <Button
+              disabled={isLoading}
+              className={clsx(
+                "mt-4 h-16",
+                props.contact?.id
+                  ? "bg-yellow-500 hover:bg-yellow-600"
+                  : "bg-indigo-500 hover:bg-indigo-600"
+              )}
+            >
               {isLoading ? (
                 <div className="flex justify-center items-center">
                   <CircleNotch
@@ -339,12 +427,97 @@ function DialogContact(props: DialogContactProps) {
                     className="text-white w-6 h-6 animate-spin"
                   />
                 </div>
+              ) : props.contact?.id ? (
+                "Atualizar"
               ) : (
                 "Adicionar"
               )}
             </Button>
           </form>
         </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface PropsDialogConfirmRemoveContact {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  contact: Contact;
+}
+
+function DialogConfirmRemoveContact(props: PropsDialogConfirmRemoveContact) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmitRemoveContact = () => {
+    setIsLoading(true);
+    startTransition(async () => {
+      if (props.contact.id) {
+        const isOk = await removeContact(props.contact?.id);
+        setIsLoading(false);
+        if (isOk === true) {
+          props.onOpenChange(false);
+          toast.success("Usuário removido com sucesso!");
+        } else if (typeof isOk === "string") {
+          toast.error(isOk);
+        } else {
+          toast.error("Erro ao registrar, Tente novamente!");
+        }
+      } else {
+        toast.error("Usuário não encontrado!");
+      }
+    });
+  };
+
+  return (
+    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Excluir Aniversariante</DialogTitle>
+          <DialogDescription>
+            Você tem certeza que deseja excluir esse pessoa?
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-4 space-y-2">
+          <p>
+            <span className="font-semibold">Nome:</span> {props.contact.name}
+          </p>
+          <p>
+            <span className="font-semibold">Nascimento:</span>{" "}
+            {formatDateToBR(props.contact.birthdate)}
+          </p>
+          <p>
+            <span className="font-semibold">Relacionamento:</span>{" "}
+            {props.contact.relationship}
+          </p>
+        </div>
+        <DialogFooter className="grid grid-cols-2">
+          <Button
+            disabled={isLoading}
+            variant={"outline"}
+            className="mt-4 h-16"
+            onClick={() => props.onOpenChange(false)}
+          >
+            Cancelar
+          </Button>
+          <Button
+            disabled={isLoading}
+            variant={"destructive"}
+            className="mt-4 h-16"
+            onClick={() => onSubmitRemoveContact()}
+          >
+            {isLoading ? (
+              <div className="flex justify-center items-center">
+                <CircleNotch
+                  weight="bold"
+                  className="text-white w-6 h-6 animate-spin"
+                />
+              </div>
+            ) : (
+              "Excluir"
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
