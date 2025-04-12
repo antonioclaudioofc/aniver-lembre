@@ -24,7 +24,7 @@ export async function createContact(
     const { ...contactData } = parsed.data;
 
     const response = await fetch(
-      "https://aniver-lembre-api-production.up.railway.app/contact",
+      "https://aniver-lembre-api.vercel.app/contact",
       {
         method: "POST",
         headers: {
@@ -57,7 +57,7 @@ export async function findAllContact(): Promise<Contact[] | string> {
 
   try {
     const response = await fetch(
-      "https://aniver-lembre-api-production.up.railway.app/contact",
+      "https://aniver-lembre-api.vercel.app/contact",
       {
         method: "GET",
         headers: {
@@ -103,7 +103,7 @@ export async function updateContact(
     const { ...contactData } = parsed.data;
 
     const response = await fetch(
-      `https://aniver-lembre-api-production.up.railway.app/contact/${id}`,
+      `https://aniver-lembre-api.vercel.app/contact/${id}`,
       {
         method: "PATCH",
         headers: {
@@ -136,7 +136,7 @@ export async function removeContact(id: string): Promise<boolean | string> {
 
   try {
     const response = await fetch(
-      `https://aniver-lembre-api-production.up.railway.app/contact/${id}`,
+      `https://aniver-lembre-api.vercel.app/contact/${id}`,
       {
         method: "DELETE",
         headers: {

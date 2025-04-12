@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { findAllContact } from "@/app/(app)/actions/contact";
 import { Contact } from "@/models/contact.model";
 
-const API_URL = "https://aniver-lembre-api-production.up.railway.app";
+const API_URL = "https://aniver-lembre-api.vercel.app/";
 
 const socket = io(API_URL, { transports: ["websocket"] });
 

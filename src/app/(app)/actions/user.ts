@@ -23,7 +23,7 @@ export async function createUser(values: User): Promise<boolean | string> {
     const { confirmPassword, ...userData } = parsed.data;
 
     const response = await fetch(
-      "https://aniver-lembre-api-production.up.railway.app/user",
+      "https://aniver-lembre-api.vercel.app/user",
       {
         method: "POST",
         headers: {
@@ -62,7 +62,7 @@ export async function signIn(values: Auth) {
     const { ...authData } = parsed.data;
 
     const response = await fetch(
-      "https://aniver-lembre-api-production.up.railway.app/auth/login",
+      "https://aniver-lembre-api.vercel.app/auth/login",
       {
         method: "POST",
         headers: {
@@ -112,7 +112,7 @@ export async function decoderTokenSession() {
 
   try {
     const response = await fetch(
-      "https://aniver-lembre-api-production.up.railway.app/user",
+      "https://aniver-lembre-api.vercel.app/user",
       {
         method: "GET",
         headers: {

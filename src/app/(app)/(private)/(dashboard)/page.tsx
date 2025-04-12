@@ -21,6 +21,7 @@ import {
   NotePencil,
   Trash,
   SignOut,
+  User,
 } from "@phosphor-icons/react";
 import clsx from "clsx";
 import { startTransition, useEffect, useState } from "react";
@@ -68,6 +69,8 @@ import {
   formatDateToBR,
   formatDateToInput,
 } from "@/utils/validation";
+import { PROFILE } from "../../constants/routes";
+import Link from "next/link";
 
 export default function Home() {
   const { user, isLoadingUser } = useAuth();
@@ -140,6 +143,13 @@ export default function Home() {
               {isOpenDropdown && (
                 <div className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-2">
                   <ul className="py-2 text-sm text-gray-700">
+                    <Link
+                      className="flex items-center gap-2 px-4 py-2 text-black hover:bg-gray-100 cursor-pointer"
+                      href={PROFILE}
+                    >
+                      <User className="w-4 h-4" weight="fill" />
+                      <span className="font-bold max-md:hidden">Perfil</span>
+                    </Link>
                     <li
                       className="px-4 py-2 text-red-500 hover:bg-gray-100 flex items-center gap-2 cursor-pointer"
                       onClick={logout}

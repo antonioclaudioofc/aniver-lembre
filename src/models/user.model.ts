@@ -15,4 +15,8 @@ export const userSchema = z
     path: ["confirmPassword"],
   });
 
+export const updateUserSchema = z.object({
+  name: z.string().min(1, { message: "Campo obrigatório" }),
+});
+
 export type User = z.infer<typeof userSchema>;
