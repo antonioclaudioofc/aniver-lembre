@@ -20,3 +20,5 @@ export const updateUserSchema = z.object({
 });
 
 export type User = z.infer<typeof userSchema>;
+
+export type UpdateUser = z.infer<typeof updateUserSchema>;

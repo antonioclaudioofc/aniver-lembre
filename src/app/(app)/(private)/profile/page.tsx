@@ -22,6 +22,8 @@ import { z } from "zod";
 import { useAuth } from "@/context/AuthContext";
 import { formatDateToBR } from "@/utils/validation";
 import { Label } from "@/components/Label";
+import { updateUser } from "../../actions/user";
+import { toast } from "sonner";
 
 type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 
@@ -44,7 +46,16 @@ export default function Profile() {
   const onSubmitUpdateProfile = (values: UpdateUserSchema) => {
     setIsLoading(true);
     startTransition(async () => {
-      console.log(values);
+      const isOk = await updateUser(values);
+
+      setIsLoading(false);
+      if (isOk === true) {
+        toast.success("Usuário atualizado com sucesso!");
+      } else if (typeof isOk === "string") {
+        toast.error(isOk);
+      } else {
+        toast.error("Erro ao atualizar, Tente novamente!");
+      }
     });
   };
 
@@ -99,12 +110,10 @@ export default function Profile() {
                   )}
                 />
                 <div className="space-y-6 text-sm">
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input value={user?.email} disabled />
-                    </FormControl>
-                  </FormItem>
+                  <div>
+                    <Label>Email</Label>
+                    <p className="text-gray-500 max-h-12">{user?.email}</p>
+                  </div>
                   <div>
                     <Label>Criado em</Label>
                     <p className="text-gray-500 max-h-12">
